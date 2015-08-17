@@ -16,7 +16,11 @@ public class SiteAutoLaud {
     public static final String laud = "http://www.xing71.com/ivenus/laud.json?type=260&tid=10354&uid=11806706&token=w6TrMZ5dhQpGOmNn";
 
     /**
+     * 自动点赞
      *
+     * 每天 早上8点 自动点赞。
+     *
+     * 点赞成功后，记录到表中。 研究下发邮件。
      */
 //    @Scheduled(fixedDelay = 30000)
     @Scheduled(cron = "0 5 0 * * ?")
