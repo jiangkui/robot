@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+	<!-- 
+	<properties resource="dataBase/jdbc_mysql.properties"/>
+	-->
+	<properties>
+		<property name="dialect" value="mysql"/>
+	</properties>
+	
+	<settings>
+		<!-- 设置结果集自动装配式是否自动将下划线形式转换为java驼峰标识,默认是false -->
+		<setting name="mapUnderscoreToCamelCase" value="true"/>
+		<!-- 全局缓存开关，默认为true	
+		<setting name="cacheEnabled" value="true"/> -->
+		<setting name="jdbcTypeForNull" value="NULL"/>
+	</settings>
+
+</configuration>

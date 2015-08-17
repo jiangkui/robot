@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--suppress ALL -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="
+           http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.springframework.org/schema/aop
+           http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+           http://www.springframework.org/schema/tx
+           http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+
+    <bean id="authSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+	    <property name="configLocation" value="classpath:mybatis/mybatis-config.xml" />
+	    <property name="dataSource" ref="dataSource"/>
+	    <property name="mapperLocations">
+	    	<list>
+	    		<value>classpath:com/ljkdream/dao/sqlmap/*.xml</value>
+	    	</list>
+	    </property>
+	</bean>
+
+	<!-- 包自动扫描注入方式 -->
+	<bean id="authMybatis" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="annotationClass" value="org.springframework.stereotype.Repository"/>
+        <property name="basePackage" value="com.ljkdream.dao"/>
+        <!-- 使用该属性会导致sqlSessionFactory引用的context:property-placeholder无法优先替换
+        <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+         -->
+        <property name="sqlSessionFactoryBeanName" value="authSqlSessionFactory" />
+    </bean>
+
+    <!-- 事务管理器 -->
+    <!--<bean id="authTransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">-->
+        <!--<property name="dataSource" ref="dataSource"/>-->
+    <!--</bean>-->
+
+</beans>
