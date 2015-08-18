@@ -25,7 +25,7 @@ public class TimedTask {
      *
      * 点赞成功后，记录到表中。 研究下发邮件。
      */
-    @Scheduled(cron = "0 0 8 * * ?")
+    @Scheduled(cron = "0 30 9 * * ?")
     public void siteAutoLaud() {
         TimedTask.siteAutoLaudstart(-1);
     }
