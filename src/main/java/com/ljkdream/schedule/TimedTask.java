@@ -26,8 +26,12 @@ public class TimedTask {
      * 点赞成功后，记录到表中。 研究下发邮件。
      */
     @Scheduled(cron = "0 0 8 * * ?")
-    public void tomorrowOpenTaskStepUpdate() {
-        SiteAutoLaud siteAutoLaud = new SiteAutoLaud();
+    public void siteAutoLaud() {
+        TimedTask.siteAutoLaudstart(-1);
+    }
+
+    public static void siteAutoLaudstart(int laudNum) {
+        SiteAutoLaud siteAutoLaud = new SiteAutoLaud(laudNum);
 
         try {
             SingleScheduleQueueFactory.getScheduleQueue().put(siteAutoLaud);
@@ -36,4 +40,5 @@ public class TimedTask {
             logger.error("自动点赞任务异常！");
         }
     }
+
 }
