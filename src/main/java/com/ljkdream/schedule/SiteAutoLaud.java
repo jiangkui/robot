@@ -13,7 +13,7 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 自动
+ * 自动点赞
  * Created by LJK on 2015/8/17.
  */
 public class SiteAutoLaud extends AbstractSchedule {
@@ -50,14 +50,14 @@ public class SiteAutoLaud extends AbstractSchedule {
         try {
             for (int i = 0; i < 10; i++) {
                 int start = i * DEFAULT_SIZE + 1;
-                JSONObject jsonObject = this.getVenusList(start, DEFAULT_SIZE); //获取图的列表
+                JSONObject jsonObject = this.getVenusList(start, DEFAULT_SIZE); //获取搭配图的列表
 
                 laudCurrentNum = laudNum - laudCurrentNum; //还需要点多少个
                 if (laudCurrentNum > DEFAULT_SIZE) {
                     laudCurrentNum = DEFAULT_SIZE;
                 }
 
-                laudSuccessNum += this.laudFromVenuses(jsonObject, laudCurrentNum); //循环这个图列表，进行点赞
+                laudSuccessNum += this.laudFromVenuses(jsonObject, laudCurrentNum); //循环这个搭配图列表，进行点赞
 
                 //满足条件则跳出循环。
                 if (laudSuccessNum >= laudNum) {
@@ -71,7 +71,7 @@ public class SiteAutoLaud extends AbstractSchedule {
     }
 
     /**
-     * 获取图列表
+     * 获取搭配图列表
      *
      * @param start       开始
      * @param defaultSize 默认大小
@@ -88,12 +88,12 @@ public class SiteAutoLaud extends AbstractSchedule {
             String execute = HttpClientUtil.execute(VENUS_LIST_URL, params);
             JSONObject jsonObject = new JSONObject(execute);
 
-            logger.info("获取图列表成功。【start：" + start + "】【size：" + defaultSize + "】");
+            logger.info("获取搭配图列表成功。【start：" + start + "】【size：" + defaultSize + "】");
             return jsonObject;
 
         } catch (Exception e) {
             e.printStackTrace();
-            logger.error("获取图列表失败！");
+            logger.error("获取搭配图列表失败！");
         }
 
         return null;
@@ -101,9 +101,9 @@ public class SiteAutoLaud extends AbstractSchedule {
 
 
     /**
-     * 循环这个图列表，进行点赞
+     * 循环这个搭配图列表，进行点赞
      *
-     * @param jsonObject     图列表
+     * @param jsonObject     搭配图列表
      * @param laudCurrentNum 本次需要点赞数量
      */
     private int laudFromVenuses(JSONObject jsonObject, int laudCurrentNum) {
@@ -147,9 +147,9 @@ public class SiteAutoLaud extends AbstractSchedule {
     }
 
     /**
-     * 给图点赞
+     * 给搭配图点赞
      *
-     * @param venusId 图的id
+     * @param venusId 搭配图的id
      */
     private Boolean laudVenus(Integer venusId) {
         try {
@@ -165,9 +165,9 @@ public class SiteAutoLaud extends AbstractSchedule {
             Integer status = (Integer) jsonObject.get("status");
 
             if (status == 200) {
-                logger.info("点赞成功！图的Id：" + venusId);
+                logger.info("点赞成功！搭配图的Id：" + venusId);
             } else {
-                logger.error("点赞失败！" + jsonObject.toString() + "。图的Id：" + venusId);
+                logger.error("点赞失败！" + jsonObject.toString() + "。搭配图的Id：" + venusId);
             }
 
             int sleepSeconds = new Random().nextInt(3) + 2;
