@@ -48,7 +48,7 @@ public class SiteAutoLaud extends AbstractSchedule {
         int laudCurrentNum = 0; //本次需要点赞的数量
 
         try {
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < 10000; i++) {
                 int start = i * DEFAULT_SIZE + 1;
                 JSONObject jsonObject = this.getVenusList(start, DEFAULT_SIZE); //获取搭配图的列表
 
