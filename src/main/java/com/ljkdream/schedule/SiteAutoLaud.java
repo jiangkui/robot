@@ -59,9 +59,13 @@ public class SiteAutoLaud extends AbstractSchedule {
 
                 laudSuccessNum += this.laudFromVenuses(jsonObject, laudCurrentNum); //循环这个搭配图列表，进行点赞
 
+                logger.info("============================================================");
+                logger.info("已完成点赞，数量：" + laudSuccessNum);
+                logger.info("============================================================");
+
                 //满足条件则跳出循环。
                 if (laudSuccessNum >= laudNum) {
-                    logger.info("已完成点赞，数量：" + laudSuccessNum);
+                    logger.info("任务完成！已点赞：" + laudSuccessNum);
                     break;
                 }
             }
