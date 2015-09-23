@@ -142,7 +142,7 @@ public class SiteAutoLaud extends AbstractSchedule {
                     }
                 }
             } else {
-                logger.error("点赞状态有误！");
+                logger.error("获取搭配图列表数据失败！！");
             }
         } catch (Exception e) {
             e.printStackTrace();
