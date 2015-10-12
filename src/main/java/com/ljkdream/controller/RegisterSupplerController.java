@@ -24,7 +24,7 @@ public class RegisterSupplerController {
 
     @ResponseBody
     @RequestMapping("zhuce")
-    public Object zhuce(
+    public String zhuce(
             @RequestParam(required = true) String key,
             @RequestParam(required = true) String responseType
         ) {
@@ -38,15 +38,15 @@ public class RegisterSupplerController {
         if ("json".equals(responseType)) {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("register", exist);
-            return jsonObject;
+            return jsonObject.toString();
         } else {
-            return exist;
+            return exist + "";
         }
     }
 
     @ResponseBody
     @RequestMapping("dengji")
-    public Object dengji(
+    public String dengji(
             @RequestParam(required = true) String key,
             @RequestParam(required = true) String responseType
         ) {
@@ -61,9 +61,9 @@ public class RegisterSupplerController {
         if ("json".equals(responseType)) {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("dengji", exist);
-            return jsonObject;
+            return jsonObject.toString();
         } else {
-            return exist;
+            return exist+"";
         }
     }
 
