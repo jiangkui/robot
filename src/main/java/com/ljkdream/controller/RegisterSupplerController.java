@@ -75,21 +75,21 @@ public class RegisterSupplerController {
             @RequestParam(required = true) Integer type  //1 zhuce  2dengji
         ) {
 
-        if (type == 1) {
-            if (operation == 1) {
+        if (operation == 1) {
+            if (type == 1) {
                 ZHUCE_CACHE.put(key, key);
             } else {
                 DENGJI_CACHE.put(key, key);
             }
         } else {
-            if (operation == 1) {
+            if (type == 1) {
                 ZHUCE_CACHE.remove(key);
             } else {
                 DENGJI_CACHE.remove(key);
             }
         }
 
-        return new UnifiedResponse(UnifiedResponseCode.RC_SUCC, "注册成功！");
+        return new UnifiedResponse(UnifiedResponseCode.RC_SUCC, "操作成功！");
     }
 
 }
