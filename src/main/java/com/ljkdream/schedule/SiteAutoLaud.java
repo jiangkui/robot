@@ -41,7 +41,7 @@ public class SiteAutoLaud extends AbstractSchedule {
         String responseEntity = null;
 
         if (laudNum < 1) {
-            laudNum = new Random().nextInt(5) + 2; //最点2个赞
+            laudNum = new Random().nextInt(5) + 2; //最少点2个赞
         }
 
         int laudSuccessNum = 0; //点赞成功数量
