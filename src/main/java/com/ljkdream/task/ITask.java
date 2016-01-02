@@ -7,7 +7,7 @@ package com.ljkdream.task;
  *
  * Created by ljk on 16-1-2.
  */
-public interface ITask {
+public interface ITask extends Runnable{
 
     /**
      * 执行任务
@@ -24,4 +24,10 @@ public interface ITask {
      * @return true 是毒丸。
      */
     boolean isPoisonPill();
+
+    /**
+     * 描述任务详情
+     * @return str
+     */
+    String toString();
 }

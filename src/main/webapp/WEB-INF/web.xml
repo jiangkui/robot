@@ -18,7 +18,7 @@
 
     <!-- 开启任务服务 -->
     <listener>
-        <listener-class>com.ljkdream.listener.ScheduleExecuteListener</listener-class>
+        <listener-class>com.ljkdream.listener.TaskListener</listener-class>
     </listener>
 
     <servlet>

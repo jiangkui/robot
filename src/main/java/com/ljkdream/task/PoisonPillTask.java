@@ -17,4 +17,9 @@ public class PoisonPillTask extends AbstractBaseTask {
     public boolean isPoisonPill() {
         return true;
     }
+
+    @Override
+    public void run() {
+
+    }
 }

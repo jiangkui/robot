@@ -11,10 +11,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * 处理工作任务
- * Created by LJK on 2015/7/24.
+ * 任务监听器
+ * Created by ljk on 16-1-2.
  */
-public class ScheduleExecuteListener implements ServletContextListener {
+public class TaskListener implements ServletContextListener {
 
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
     private Logger logger = Logger.getLogger(ScheduleExecuteListener.class);
