@@ -67,7 +67,7 @@ public class PeriodWinnerTask extends AbstractBaseTask {
 
                 analysisJsonAndSaveDate(jsonObject, this);
 
-                int sleep = random.nextInt(1000) + 500;
+                int sleep = random.nextInt(100);
                 logger.info("沉睡：" + sleep + "毫秒");
                 TimeUnit.MILLISECONDS.sleep(sleep);
             } catch (Exception e) {
