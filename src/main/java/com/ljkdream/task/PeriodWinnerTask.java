@@ -37,6 +37,12 @@ public class PeriodWinnerTask extends AbstractBaseTask {
 
     @Override
     public void execute() {
+        //继续抓取
+        PeriodWinner periodWinner = periodWinnerService.queryOldPeriodWinnerByGid(gid);
+        if (periodWinner != null) {
+            perid = periodWinner.getPeriod();
+        }
+
         Random random = new Random();
         int exist = 0;
         while (true) {

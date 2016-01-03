@@ -70,4 +70,23 @@ public class PeriodWinnerService {
 
         return null;
     }
+
+    /**
+     * 获取 该商品最旧的哪一个 获奖数据
+     *
+     * @param gid 商品id
+     * @return obj
+     */
+    public PeriodWinner queryOldPeriodWinnerByGid(Long gid) {
+        PeriodWinnerExample periodWinnerExample = new PeriodWinnerExample();
+        periodWinnerExample.createCriteria().andGidEqualTo(gid);
+        periodWinnerExample.setOrderByClause("id desc limit 1");
+
+        List<PeriodWinner> periodWinnerList = periodWinnerDao.selectByExample(periodWinnerExample);
+        if (periodWinnerList.size() > 0) {
+            return periodWinnerList.get(0);
+        }
+
+        return null;
+    }
 }
