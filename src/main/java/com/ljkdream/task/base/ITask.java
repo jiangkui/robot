@@ -1,4 +1,4 @@
-package com.ljkdream.task;
+package com.ljkdream.task.base;
 
 /**
  * 任务接口
@@ -7,7 +7,7 @@ package com.ljkdream.task;
  *
  * Created by ljk on 16-1-2.
  */
-public interface ITask extends Runnable{
+public interface ITask {
 
     /**
      * 执行任务

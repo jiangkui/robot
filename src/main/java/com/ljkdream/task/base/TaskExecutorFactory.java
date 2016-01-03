@@ -1,4 +1,4 @@
-package com.ljkdream.task;
+package com.ljkdream.task.base;
 
 /**
  * 任务执行者工厂

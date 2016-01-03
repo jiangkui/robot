@@ -57,6 +57,13 @@ public class HttpClientUtil {
 
         log.debug("执行HTTP 请求：" + url);
 
+        entityString = execute(httpPost, url);
+
+        return entityString;
+    }
+
+    private static String execute(HttpPost httpPost, String url) throws HttpException, HttpStatusException {
+        String result = "";
         try {
             CloseableHttpResponse response = httpClient.execute(httpPost);
             StatusLine statusLine = response.getStatusLine();
@@ -67,7 +74,7 @@ public class HttpClientUtil {
 
                 HttpEntity entity = response.getEntity();
                 if (entity != null) {
-                    entityString = EntityUtils.toString(entity);
+                    result = EntityUtils.toString(entity);
                 }
 
             } else {
@@ -80,7 +87,7 @@ public class HttpClientUtil {
             throw new HttpException(url, e);
         }
 
-        return entityString;
+        return result;
     }
 
     /**
@@ -102,28 +109,7 @@ public class HttpClientUtil {
 
         log.debug("执行HTTP 请求：" + url);
 
-        try {
-            CloseableHttpResponse response = httpClient.execute(httpPost);
-            StatusLine statusLine = response.getStatusLine();
-            Header[] allHeaders = response.getAllHeaders();
-
-            if (statusLine.getStatusCode() == 200) {
-                log.debug(statusLine + Arrays.toString(allHeaders));
-
-                HttpEntity entity = response.getEntity();
-                if (entity != null) {
-                    entityString = EntityUtils.toString(entity);
-                }
-
-            } else {
-                log.error("【状态：" + statusLine + "】【响应头：" + Arrays.toString(allHeaders) + "】");
-                throw new HttpStatusException(statusLine, allHeaders);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            log.error("网络请求模块，出错！【" + url + "】");
-            throw new HttpException(url, e);
-        }
+        entityString = execute(httpPost, url);
 
         return entityString;
     }

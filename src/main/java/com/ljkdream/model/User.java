@@ -1,5 +1,7 @@
 package com.ljkdream.model;
 
+import java.util.Date;
+
 public class User {
     private Long id;
 
@@ -9,23 +11,27 @@ public class User {
 
     private String nickname;
 
-    private String ipaddress;
+    private String IPAddress;
 
-    private String avatarname;
+    private String avatarName;
 
-    private String avatarprefix;
+    private String avatarPrefix;
 
-    private String ip;
+    private String IP;
 
     private String mobile;
 
-    private String freecoin;
+    private String freeCoin;
 
-    private String isfirstlogin;
+    private String isFirstLogin;
 
     private String coin;
 
-    private String bonusnum;
+    private String bonusNum;
+
+    private Date createTime;
+
+    private Date modifyTime;
 
     public Long getId() {
         return id;
@@ -59,36 +65,36 @@ public class User {
         this.nickname = nickname == null ? null : nickname.trim();
     }
 
-    public String getIpaddress() {
-        return ipaddress;
+    public String getIPAddress() {
+        return IPAddress;
     }
 
-    public void setIpaddress(String ipaddress) {
-        this.ipaddress = ipaddress == null ? null : ipaddress.trim();
+    public void setIPAddress(String IPAddress) {
+        this.IPAddress = IPAddress == null ? null : IPAddress.trim();
     }
 
-    public String getAvatarname() {
-        return avatarname;
+    public String getAvatarName() {
+        return avatarName;
     }
 
-    public void setAvatarname(String avatarname) {
-        this.avatarname = avatarname == null ? null : avatarname.trim();
+    public void setAvatarName(String avatarName) {
+        this.avatarName = avatarName == null ? null : avatarName.trim();
     }
 
-    public String getAvatarprefix() {
-        return avatarprefix;
+    public String getAvatarPrefix() {
+        return avatarPrefix;
     }
 
-    public void setAvatarprefix(String avatarprefix) {
-        this.avatarprefix = avatarprefix == null ? null : avatarprefix.trim();
+    public void setAvatarPrefix(String avatarPrefix) {
+        this.avatarPrefix = avatarPrefix == null ? null : avatarPrefix.trim();
     }
 
-    public String getIp() {
-        return ip;
+    public String getIP() {
+        return IP;
     }
 
-    public void setIp(String ip) {
-        this.ip = ip == null ? null : ip.trim();
+    public void setIP(String IP) {
+        this.IP = IP == null ? null : IP.trim();
     }
 
     public String getMobile() {
@@ -99,20 +105,20 @@ public class User {
         this.mobile = mobile == null ? null : mobile.trim();
     }
 
-    public String getFreecoin() {
-        return freecoin;
+    public String getFreeCoin() {
+        return freeCoin;
     }
 
-    public void setFreecoin(String freecoin) {
-        this.freecoin = freecoin == null ? null : freecoin.trim();
+    public void setFreeCoin(String freeCoin) {
+        this.freeCoin = freeCoin == null ? null : freeCoin.trim();
     }
 
-    public String getIsfirstlogin() {
-        return isfirstlogin;
+    public String getIsFirstLogin() {
+        return isFirstLogin;
     }
 
-    public void setIsfirstlogin(String isfirstlogin) {
-        this.isfirstlogin = isfirstlogin == null ? null : isfirstlogin.trim();
+    public void setIsFirstLogin(String isFirstLogin) {
+        this.isFirstLogin = isFirstLogin == null ? null : isFirstLogin.trim();
     }
 
     public String getCoin() {
@@ -123,11 +129,27 @@ public class User {
         this.coin = coin == null ? null : coin.trim();
     }
 
-    public String getBonusnum() {
-        return bonusnum;
+    public String getBonusNum() {
+        return bonusNum;
     }
 
-    public void setBonusnum(String bonusnum) {
-        this.bonusnum = bonusnum == null ? null : bonusnum.trim();
+    public void setBonusNum(String bonusNum) {
+        this.bonusNum = bonusNum == null ? null : bonusNum.trim();
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public Date getModifyTime() {
+        return modifyTime;
+    }
+
+    public void setModifyTime(Date modifyTime) {
+        this.modifyTime = modifyTime;
     }
 }

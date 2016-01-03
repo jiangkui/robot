@@ -1,4 +1,4 @@
-package com.ljkdream.task;
+package com.ljkdream.task.base;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.RejectedExecutionException;
@@ -24,7 +24,7 @@ public class BoundedExecutor {
         this.semaphore = new Semaphore(bound);
     }
 
-    public void submitTask(final Runnable command) throws InterruptedException {
+    public void submitTask(final ITask task) throws InterruptedException {
         semaphore.acquire();
 
         try {
@@ -32,7 +32,7 @@ public class BoundedExecutor {
                 @Override
                 public void run() {
                     try {
-                        command.run();
+                        task.execute();
                     } finally {
                         semaphore.release();
                     }
