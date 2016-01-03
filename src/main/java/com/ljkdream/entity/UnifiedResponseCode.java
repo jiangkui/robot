@@ -1,4 +1,4 @@
-package com.ljkdream.entiry;
+package com.ljkdream.entity;
 public interface UnifiedResponseCode {
 
 	/** 200 成功（RC表示ResponseCode，加这个前缀是以免跟ActionSupport定义的响应码冲突）*/

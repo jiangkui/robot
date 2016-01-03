@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
-/**
+/**dao
  * tester
  * Created by ljk on 16-1-2.
  */

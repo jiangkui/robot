@@ -1,4 +1,4 @@
-package com.ljkdream.entiry;
+package com.ljkdream.entity;
 /**
  * 开放API所使用的统一的响应数据格式
  * */

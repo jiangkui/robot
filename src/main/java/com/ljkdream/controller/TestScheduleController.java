@@ -1,6 +1,6 @@
 package com.ljkdream.controller;
 
-import com.ljkdream.entiry.UnifiedResponse;
+import com.ljkdream.entity.UnifiedResponse;
 import com.ljkdream.schedule.TimedTask;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.xml.XmlBeanFactory;

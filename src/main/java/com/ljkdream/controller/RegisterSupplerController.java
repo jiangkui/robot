@@ -1,7 +1,7 @@
 package com.ljkdream.controller;
 
-import com.ljkdream.entiry.UnifiedResponse;
-import com.ljkdream.entiry.UnifiedResponseCode;
+import com.ljkdream.entity.UnifiedResponse;
+import com.ljkdream.entity.UnifiedResponseCode;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.springframework.stereotype.Controller;

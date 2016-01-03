@@ -1,8 +1,5 @@
 package com.ljkdream.test;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 /**
  * 测试
  * Created by LJK on 2015/10/12.
