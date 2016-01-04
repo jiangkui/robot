@@ -40,8 +40,8 @@ public class AllGoodsTask extends AbstractBaseTask {
         int exit = 0;
         Random random = new Random();
 
-//        while (true) {
-        for (int i = 0; i < 1; i++) {
+        while (true) {
+//        for (int i = 0; i < 1; i++) {
             String obtainUrl = obtainUrl();
             logger.info("本次请求url：" + obtainUrl);
             try {
