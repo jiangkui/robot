@@ -2,11 +2,15 @@ package com.ljkdream.service;
 
 import com.ljkdream.dao.GoodsMapper;
 import com.ljkdream.dao.PeriodWinnerMapper;
+import com.ljkdream.dao.RelationGoodsPeriodMapper;
 import com.ljkdream.dao.UserMapper;
 import com.ljkdream.model.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,13 +23,18 @@ import java.util.Map;
 public class YiYuanDuoBaoService {
 
     @Autowired
-    private PeriodWinnerMapper periodWinnerDao;
+    private PeriodWinnerMapper periodWinnerMapper;
 
     @Autowired
-    private UserMapper userDao;
+    private UserMapper userMapper;
 
     @Autowired
-    private GoodsMapper goodsDao;
+    private GoodsMapper goodsMapper;
+
+    @Autowired
+    private RelationGoodsPeriodMapper relationGoodsPeriodMapper;
+
+    private Logger logger = LoggerFactory.getLogger(YiYuanDuoBaoService.class);
 
     public int savePeriodWinnerByNotExist(PeriodWinner periodWinner) {
         PeriodWinner periodWinner1 = this.queryPeriodWinnerByPeriod(periodWinner.getPeriod());
@@ -33,7 +42,7 @@ public class YiYuanDuoBaoService {
             return 1;
         }
 
-        int insert = periodWinnerDao.insert(periodWinner);
+        int insert = periodWinnerMapper.insert(periodWinner);
         return insert;
     }
 
@@ -41,7 +50,7 @@ public class YiYuanDuoBaoService {
         PeriodWinnerExample periodWinnerExample = new PeriodWinnerExample();
         periodWinnerExample.createCriteria().andPeriodEqualTo(period);
 
-        List<PeriodWinner> periodWinnerList = periodWinnerDao.selectByExample(periodWinnerExample);
+        List<PeriodWinner> periodWinnerList = periodWinnerMapper.selectByExample(periodWinnerExample);
 
         if (periodWinnerList.size() > 0) {
             return periodWinnerList.get(0);
@@ -57,7 +66,7 @@ public class YiYuanDuoBaoService {
             return 1;
         }
 
-        int insert = userDao.insert(user);
+        int insert = userMapper.insert(user);
         return insert;
     }
 
@@ -65,7 +74,7 @@ public class YiYuanDuoBaoService {
         UserExample example = new UserExample();
         example.createCriteria().andCidEqualTo(cid);
 
-        List<User> userList = userDao.selectByExample(example);
+        List<User> userList = userMapper.selectByExample(example);
 
         if (userList.size() > 0) {
             return userList.get(0);
@@ -85,7 +94,7 @@ public class YiYuanDuoBaoService {
         periodWinnerExample.createCriteria().andGidEqualTo(gid);
         periodWinnerExample.setOrderByClause("id desc limit 1");
 
-        List<PeriodWinner> periodWinnerList = periodWinnerDao.selectByExample(periodWinnerExample);
+        List<PeriodWinner> periodWinnerList = periodWinnerMapper.selectByExample(periodWinnerExample);
         if (periodWinnerList.size() > 0) {
             return periodWinnerList.get(0);
         }
@@ -107,7 +116,7 @@ public class YiYuanDuoBaoService {
             return 1;
         }
 
-        int insert = goodsDao.insert(goods);
+        int insert = goodsMapper.insert(goods);
         if (insert > 0) {
             goodsIdMap.put(gid, gid);
         }
@@ -119,9 +128,52 @@ public class YiYuanDuoBaoService {
         GoodsExample goodsExample = new GoodsExample();
         goodsExample.createCriteria().andGidEqualTo(gid);
 
-        List<Goods> goodsList = goodsDao.selectByExample(goodsExample);
+        List<Goods> goodsList = goodsMapper.selectByExample(goodsExample);
         if (goodsList.size() > 0) {
             return goodsList.get(0);
+        }
+
+        return null;
+    }
+
+    public void saveRelationGoodsPeriodByMap(Map<String, String> relationMap) {
+        Date now = new Date();
+
+        for (Map.Entry<String, String> entry : relationMap.entrySet()) {
+            try {
+                String gidStr = entry.getKey();
+                String periodStr = entry.getValue();
+                long gid = Long.parseLong(gidStr);
+                long period = Long.parseLong(periodStr);
+
+                RelationGoodsPeriod relation = queryRelationGoodsPeriodByGid(gid);
+
+                if (relation == null) {
+                    RelationGoodsPeriod relationGoodsPeriod = new RelationGoodsPeriod();
+                    relationGoodsPeriod.setGid(gid);
+                    relationGoodsPeriod.setPeriod(period);
+                    relationGoodsPeriod.setCreateTime(now);
+                    relationGoodsPeriod.setModifyTime(now);
+                    relationGoodsPeriodMapper.insert(relationGoodsPeriod);
+                } else {
+                    relation.setPeriod(period);
+                    relation.setModifyTime(now);
+                    relationGoodsPeriodMapper.updateByPrimaryKeySelective(relation);
+                }
+            } catch (Exception e) {
+                logger.error("存储关系失败！" + e.getMessage());
+            }
+        }
+    }
+
+    private RelationGoodsPeriod queryRelationGoodsPeriodByGid(long gid) {
+        RelationGoodsPeriodExample relationGoodsPeriodExample = new RelationGoodsPeriodExample();
+        relationGoodsPeriodExample.createCriteria().andGidEqualTo(gid);
+
+        List<RelationGoodsPeriod> list = relationGoodsPeriodMapper.selectByExample(relationGoodsPeriodExample);
+
+        if (list.size() > 0) {
+            return list.get(0);
         }
 
         return null;

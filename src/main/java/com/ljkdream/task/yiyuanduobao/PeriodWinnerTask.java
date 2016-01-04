@@ -70,7 +70,7 @@ public class PeriodWinnerTask extends AbstractBaseTask {
                     //被屏蔽了，切换代理
                     exist++;
                     logger.error("code != 0 次数：" + exist);
-                    if (exist > 10) {
+                    if (exist >= 3) {
                         break;
                     }
                     continue;

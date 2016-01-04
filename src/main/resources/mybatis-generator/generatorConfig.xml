@@ -5,7 +5,8 @@
 <generatorConfiguration>
     <!--数据库驱动-->
     <classPathEntry
-            location="/home/ljk/.m2/repository/mysql/mysql-connector-java/5.1.6/mysql-connector-java-5.1.6.jar"/>
+            location="/home/jiangkui/.m2/repository/mysql/mysql-connector-java/5.1.6/mysql-connector-java-5.1.6.jar"/>
+    <!--location="/home/ljk/.m2/repository/mysql/mysql-connector-java/5.1.6/mysql-connector-java-5.1.6.jar"/>-->
     <context id="DB2Tables" targetRuntime="MyBatis3">
         <commentGenerator>
             <property name="suppressDate" value="true"/>
@@ -15,30 +16,33 @@
         <jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://localhost/one" userId="root"
                         password="ljk">
         </jdbcConnection>
+
         <javaTypeResolver>
             <property name="forceBigDecimals" value="false"/>
         </javaTypeResolver>
         <!--生成Model类存放位置-->
-        <javaModelGenerator targetPackage="com.ljkdream.model" targetProject="src">
+        <javaModelGenerator targetPackage="com.ljkdream.model" targetProject="code">
             <property name="enableSubPackages" value="true"/>
             <property name="trimStrings" value="true"/>
         </javaModelGenerator>
         <!--生成映射文件存放位置-->
-        <sqlMapGenerator targetPackage="com.ljkdream.dao.mapping" targetProject="src">
+        <sqlMapGenerator targetPackage="com.ljkdream.dao.mapping" targetProject="code">
             <property name="enableSubPackages" value="true"/>
         </sqlMapGenerator>
         <!--生成Dao类存放位置-->
-        <javaClientGenerator type="XMLMAPPER" targetPackage="com.ljkdream.dao" targetProject="src">
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.ljkdream.dao" targetProject="code">
             <property name="enableSubPackages" value="true"/>
         </javaClientGenerator>
+
         <!--生成对应表及类名-->
         <!--<table tableName="user">-->
         <!--<columnOverride column="ip" property="IP"/>-->
         <!--<columnOverride column="IP_address" property="IPAddress"/>-->
         <!--</table>-->
         <!--<table tableName="period_winner"/>-->
-        <table tableName="goods">
-            <columnOverride column="desc_str" property="desc"/>
-        </table>
+        <!--<table tableName="goods">-->
+        <!--<columnOverride column="desc_str" property="desc"/>-->
+        <!--</table>-->
+        <table tableName="relation_goods_period"/>
     </context>
 </generatorConfiguration>
