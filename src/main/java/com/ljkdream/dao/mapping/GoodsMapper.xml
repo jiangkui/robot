@@ -1,0 +1,467 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ljkdream.dao.GoodsMapper">
+    <resultMap id="BaseResultMap" type="com.ljkdream.model.Goods">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="gid" property="gid" jdbcType="BIGINT"/>
+        <result column="gname" property="gname" jdbcType="VARCHAR"/>
+        <result column="price" property="price" jdbcType="VARCHAR"/>
+        <result column="desc_str" property="desc" jdbcType="VARCHAR"/>
+        <result column="gpic" property="gpic" jdbcType="VARCHAR"/>
+        <result column="show_pic_num" property="showPicNum" jdbcType="VARCHAR"/>
+        <result column="buy_unit" property="buyUnit" jdbcType="VARCHAR"/>
+        <result column="price_base" property="priceBase" jdbcType="VARCHAR"/>
+        <result column="tag" property="tag" jdbcType="VARCHAR"/>
+        <result column="price_type" property="priceType" jdbcType="VARCHAR"/>
+        <result column="property" property="property" jdbcType="VARCHAR"/>
+        <result column="price_unit" property="priceUnit" jdbcType="VARCHAR"/>
+        <result column="regular_buy_max" property="regularBuyMax" jdbcType="VARCHAR"/>
+        <result column="buyable" property="buyable" jdbcType="VARCHAR"/>
+        <result column="brand" property="brand" jdbcType="VARCHAR"/>
+        <result column="wish_setable" property="wishSetable" jdbcType="VARCHAR"/>
+        <result column="type_id" property="typeId" jdbcType="VARCHAR"/>
+        <result column="goods_type" property="goodsType" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <sql id="Example_Where_Clause">
+        <where>
+            <foreach collection="oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" suffix=")" prefixOverrides="and">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")"
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Update_By_Example_Where_Clause">
+        <where>
+            <foreach collection="example.oredCriteria" item="criteria" separator="or">
+                <if test="criteria.valid">
+                    <trim prefix="(" suffix=")" prefixOverrides="and">
+                        <foreach collection="criteria.criteria" item="criterion">
+                            <choose>
+                                <when test="criterion.noValue">
+                                    and ${criterion.condition}
+                                </when>
+                                <when test="criterion.singleValue">
+                                    and ${criterion.condition} #{criterion.value}
+                                </when>
+                                <when test="criterion.betweenValue">
+                                    and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                                </when>
+                                <when test="criterion.listValue">
+                                    and ${criterion.condition}
+                                    <foreach collection="criterion.value" item="listItem" open="(" close=")"
+                                             separator=",">
+                                        #{listItem}
+                                    </foreach>
+                                </when>
+                            </choose>
+                        </foreach>
+                    </trim>
+                </if>
+            </foreach>
+        </where>
+    </sql>
+    <sql id="Base_Column_List">
+    id, gid, gname, price, desc_str, gpic, show_pic_num, buy_unit, price_base, tag, price_type, 
+    property, price_unit, regular_buy_max, buyable, brand, wish_setable, type_id, goods_type, 
+    create_time, modify_time
+  </sql>
+    <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.ljkdream.model.GoodsExample">
+        select
+        <if test="distinct">
+            distinct
+        </if>
+        <include refid="Base_Column_List"/>
+        from goods
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+        <if test="orderByClause != null">
+            order by ${orderByClause}
+        </if>
+    </select>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+        <include refid="Base_Column_List"/>
+        from goods
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from goods
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <delete id="deleteByExample" parameterType="com.ljkdream.model.GoodsExample">
+        delete from goods
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </delete>
+    <insert id="insert" parameterType="com.ljkdream.model.Goods">
+        insert into goods (id, gid, gname,
+        price, desc_str, gpic,
+        show_pic_num, buy_unit, price_base,
+        tag, price_type, property,
+        price_unit, regular_buy_max, buyable,
+        brand, wish_setable, type_id,
+        goods_type, create_time, modify_time
+        )
+        values (#{id,jdbcType=BIGINT}, #{gid,jdbcType=BIGINT}, #{gname,jdbcType=VARCHAR},
+        #{price,jdbcType=VARCHAR}, #{desc,jdbcType=VARCHAR}, #{gpic,jdbcType=VARCHAR},
+        #{showPicNum,jdbcType=VARCHAR}, #{buyUnit,jdbcType=VARCHAR}, #{priceBase,jdbcType=VARCHAR},
+        #{tag,jdbcType=VARCHAR}, #{priceType,jdbcType=VARCHAR}, #{property,jdbcType=VARCHAR},
+        #{priceUnit,jdbcType=VARCHAR}, #{regularBuyMax,jdbcType=VARCHAR}, #{buyable,jdbcType=VARCHAR},
+        #{brand,jdbcType=VARCHAR}, #{wishSetable,jdbcType=VARCHAR}, #{typeId,jdbcType=VARCHAR},
+        #{goodsType,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{modifyTime,jdbcType=TIMESTAMP}
+        )
+    </insert>
+    <insert id="insertSelective" parameterType="com.ljkdream.model.Goods">
+        insert into goods
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="gid != null">
+                gid,
+            </if>
+            <if test="gname != null">
+                gname,
+            </if>
+            <if test="price != null">
+                price,
+            </if>
+            <if test="desc != null">
+                desc_str,
+            </if>
+            <if test="gpic != null">
+                gpic,
+            </if>
+            <if test="showPicNum != null">
+                show_pic_num,
+            </if>
+            <if test="buyUnit != null">
+                buy_unit,
+            </if>
+            <if test="priceBase != null">
+                price_base,
+            </if>
+            <if test="tag != null">
+                tag,
+            </if>
+            <if test="priceType != null">
+                price_type,
+            </if>
+            <if test="property != null">
+                property,
+            </if>
+            <if test="priceUnit != null">
+                price_unit,
+            </if>
+            <if test="regularBuyMax != null">
+                regular_buy_max,
+            </if>
+            <if test="buyable != null">
+                buyable,
+            </if>
+            <if test="brand != null">
+                brand,
+            </if>
+            <if test="wishSetable != null">
+                wish_setable,
+            </if>
+            <if test="typeId != null">
+                type_id,
+            </if>
+            <if test="goodsType != null">
+                goods_type,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="modifyTime != null">
+                modify_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="gid != null">
+                #{gid,jdbcType=BIGINT},
+            </if>
+            <if test="gname != null">
+                #{gname,jdbcType=VARCHAR},
+            </if>
+            <if test="price != null">
+                #{price,jdbcType=VARCHAR},
+            </if>
+            <if test="desc != null">
+                #{desc,jdbcType=VARCHAR},
+            </if>
+            <if test="gpic != null">
+                #{gpic,jdbcType=VARCHAR},
+            </if>
+            <if test="showPicNum != null">
+                #{showPicNum,jdbcType=VARCHAR},
+            </if>
+            <if test="buyUnit != null">
+                #{buyUnit,jdbcType=VARCHAR},
+            </if>
+            <if test="priceBase != null">
+                #{priceBase,jdbcType=VARCHAR},
+            </if>
+            <if test="tag != null">
+                #{tag,jdbcType=VARCHAR},
+            </if>
+            <if test="priceType != null">
+                #{priceType,jdbcType=VARCHAR},
+            </if>
+            <if test="property != null">
+                #{property,jdbcType=VARCHAR},
+            </if>
+            <if test="priceUnit != null">
+                #{priceUnit,jdbcType=VARCHAR},
+            </if>
+            <if test="regularBuyMax != null">
+                #{regularBuyMax,jdbcType=VARCHAR},
+            </if>
+            <if test="buyable != null">
+                #{buyable,jdbcType=VARCHAR},
+            </if>
+            <if test="brand != null">
+                #{brand,jdbcType=VARCHAR},
+            </if>
+            <if test="wishSetable != null">
+                #{wishSetable,jdbcType=VARCHAR},
+            </if>
+            <if test="typeId != null">
+                #{typeId,jdbcType=VARCHAR},
+            </if>
+            <if test="goodsType != null">
+                #{goodsType,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifyTime != null">
+                #{modifyTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <select id="countByExample" parameterType="com.ljkdream.model.GoodsExample" resultType="java.lang.Integer">
+        select count(*) from goods
+        <if test="_parameter != null">
+            <include refid="Example_Where_Clause"/>
+        </if>
+    </select>
+    <update id="updateByExampleSelective" parameterType="map">
+        update goods
+        <set>
+            <if test="record.id != null">
+                id = #{record.id,jdbcType=BIGINT},
+            </if>
+            <if test="record.gid != null">
+                gid = #{record.gid,jdbcType=BIGINT},
+            </if>
+            <if test="record.gname != null">
+                gname = #{record.gname,jdbcType=VARCHAR},
+            </if>
+            <if test="record.price != null">
+                price = #{record.price,jdbcType=VARCHAR},
+            </if>
+            <if test="record.desc != null">
+                desc_str = #{record.desc,jdbcType=VARCHAR},
+            </if>
+            <if test="record.gpic != null">
+                gpic = #{record.gpic,jdbcType=VARCHAR},
+            </if>
+            <if test="record.showPicNum != null">
+                show_pic_num = #{record.showPicNum,jdbcType=VARCHAR},
+            </if>
+            <if test="record.buyUnit != null">
+                buy_unit = #{record.buyUnit,jdbcType=VARCHAR},
+            </if>
+            <if test="record.priceBase != null">
+                price_base = #{record.priceBase,jdbcType=VARCHAR},
+            </if>
+            <if test="record.tag != null">
+                tag = #{record.tag,jdbcType=VARCHAR},
+            </if>
+            <if test="record.priceType != null">
+                price_type = #{record.priceType,jdbcType=VARCHAR},
+            </if>
+            <if test="record.property != null">
+                property = #{record.property,jdbcType=VARCHAR},
+            </if>
+            <if test="record.priceUnit != null">
+                price_unit = #{record.priceUnit,jdbcType=VARCHAR},
+            </if>
+            <if test="record.regularBuyMax != null">
+                regular_buy_max = #{record.regularBuyMax,jdbcType=VARCHAR},
+            </if>
+            <if test="record.buyable != null">
+                buyable = #{record.buyable,jdbcType=VARCHAR},
+            </if>
+            <if test="record.brand != null">
+                brand = #{record.brand,jdbcType=VARCHAR},
+            </if>
+            <if test="record.wishSetable != null">
+                wish_setable = #{record.wishSetable,jdbcType=VARCHAR},
+            </if>
+            <if test="record.typeId != null">
+                type_id = #{record.typeId,jdbcType=VARCHAR},
+            </if>
+            <if test="record.goodsType != null">
+                goods_type = #{record.goodsType,jdbcType=VARCHAR},
+            </if>
+            <if test="record.createTime != null">
+                create_time = #{record.createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="record.modifyTime != null">
+                modify_time = #{record.modifyTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByExample" parameterType="map">
+        update goods
+        set id = #{record.id,jdbcType=BIGINT},
+        gid = #{record.gid,jdbcType=BIGINT},
+        gname = #{record.gname,jdbcType=VARCHAR},
+        price = #{record.price,jdbcType=VARCHAR},
+        desc_str = #{record.desc,jdbcType=VARCHAR},
+        gpic = #{record.gpic,jdbcType=VARCHAR},
+        show_pic_num = #{record.showPicNum,jdbcType=VARCHAR},
+        buy_unit = #{record.buyUnit,jdbcType=VARCHAR},
+        price_base = #{record.priceBase,jdbcType=VARCHAR},
+        tag = #{record.tag,jdbcType=VARCHAR},
+        price_type = #{record.priceType,jdbcType=VARCHAR},
+        property = #{record.property,jdbcType=VARCHAR},
+        price_unit = #{record.priceUnit,jdbcType=VARCHAR},
+        regular_buy_max = #{record.regularBuyMax,jdbcType=VARCHAR},
+        buyable = #{record.buyable,jdbcType=VARCHAR},
+        brand = #{record.brand,jdbcType=VARCHAR},
+        wish_setable = #{record.wishSetable,jdbcType=VARCHAR},
+        type_id = #{record.typeId,jdbcType=VARCHAR},
+        goods_type = #{record.goodsType,jdbcType=VARCHAR},
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+        modify_time = #{record.modifyTime,jdbcType=TIMESTAMP}
+        <if test="_parameter != null">
+            <include refid="Update_By_Example_Where_Clause"/>
+        </if>
+    </update>
+    <update id="updateByPrimaryKeySelective" parameterType="com.ljkdream.model.Goods">
+        update goods
+        <set>
+            <if test="gid != null">
+                gid = #{gid,jdbcType=BIGINT},
+            </if>
+            <if test="gname != null">
+                gname = #{gname,jdbcType=VARCHAR},
+            </if>
+            <if test="price != null">
+                price = #{price,jdbcType=VARCHAR},
+            </if>
+            <if test="desc != null">
+                desc_str = #{desc,jdbcType=VARCHAR},
+            </if>
+            <if test="gpic != null">
+                gpic = #{gpic,jdbcType=VARCHAR},
+            </if>
+            <if test="showPicNum != null">
+                show_pic_num = #{showPicNum,jdbcType=VARCHAR},
+            </if>
+            <if test="buyUnit != null">
+                buy_unit = #{buyUnit,jdbcType=VARCHAR},
+            </if>
+            <if test="priceBase != null">
+                price_base = #{priceBase,jdbcType=VARCHAR},
+            </if>
+            <if test="tag != null">
+                tag = #{tag,jdbcType=VARCHAR},
+            </if>
+            <if test="priceType != null">
+                price_type = #{priceType,jdbcType=VARCHAR},
+            </if>
+            <if test="property != null">
+                property = #{property,jdbcType=VARCHAR},
+            </if>
+            <if test="priceUnit != null">
+                price_unit = #{priceUnit,jdbcType=VARCHAR},
+            </if>
+            <if test="regularBuyMax != null">
+                regular_buy_max = #{regularBuyMax,jdbcType=VARCHAR},
+            </if>
+            <if test="buyable != null">
+                buyable = #{buyable,jdbcType=VARCHAR},
+            </if>
+            <if test="brand != null">
+                brand = #{brand,jdbcType=VARCHAR},
+            </if>
+            <if test="wishSetable != null">
+                wish_setable = #{wishSetable,jdbcType=VARCHAR},
+            </if>
+            <if test="typeId != null">
+                type_id = #{typeId,jdbcType=VARCHAR},
+            </if>
+            <if test="goodsType != null">
+                goods_type = #{goodsType,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifyTime != null">
+                modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.ljkdream.model.Goods">
+    update goods
+    set gid = #{gid,jdbcType=BIGINT},
+      gname = #{gname,jdbcType=VARCHAR},
+      price = #{price,jdbcType=VARCHAR},
+      desc_str = #{desc,jdbcType=VARCHAR},
+      gpic = #{gpic,jdbcType=VARCHAR},
+      show_pic_num = #{showPicNum,jdbcType=VARCHAR},
+      buy_unit = #{buyUnit,jdbcType=VARCHAR},
+      price_base = #{priceBase,jdbcType=VARCHAR},
+      tag = #{tag,jdbcType=VARCHAR},
+      price_type = #{priceType,jdbcType=VARCHAR},
+      property = #{property,jdbcType=VARCHAR},
+      price_unit = #{priceUnit,jdbcType=VARCHAR},
+      regular_buy_max = #{regularBuyMax,jdbcType=VARCHAR},
+      buyable = #{buyable,jdbcType=VARCHAR},
+      brand = #{brand,jdbcType=VARCHAR},
+      wish_setable = #{wishSetable,jdbcType=VARCHAR},
+      type_id = #{typeId,jdbcType=VARCHAR},
+      goods_type = #{goodsType,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

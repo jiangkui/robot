@@ -32,10 +32,13 @@
             <property name="enableSubPackages" value="true"/>
         </javaClientGenerator>
         <!--生成对应表及类名-->
-        <table tableName="user">
-            <columnOverride column="ip" property="IP"/>
-            <columnOverride column="IP_address" property="IPAddress"/>
+        <!--<table tableName="user">-->
+        <!--<columnOverride column="ip" property="IP"/>-->
+        <!--<columnOverride column="IP_address" property="IPAddress"/>-->
+        <!--</table>-->
+        <!--<table tableName="period_winner"/>-->
+        <table tableName="goods">
+            <columnOverride column="desc_str" property="desc"/>
         </table>
-        <table tableName="period_winner"/>
     </context>
 </generatorConfiguration>

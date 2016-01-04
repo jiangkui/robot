@@ -1,9 +1,8 @@
 package com.ljkdream.controller;
 
 import com.ljkdream.entity.UnifiedResponse;
-import com.ljkdream.model.PeriodWinner;
-import com.ljkdream.service.PeriodWinnerService;
-import com.ljkdream.task.PeriodWinnerTask;
+import com.ljkdream.service.YiYuanDuoBaoService;
+import com.ljkdream.task.yiyuanduobao.PeriodWinnerTask;
 import com.ljkdream.task.base.TaskExecutorFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,12 +18,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class PeriodWinnerController {
 
     @Autowired
-    private PeriodWinnerService periodWinnerService;
+    private YiYuanDuoBaoService yiYuanDuoBaoService;
 
     @ResponseBody
     @RequestMapping("test")
     public UnifiedResponse test(Long perid, Long gid) {
-        PeriodWinnerTask periodWinnerTask = new PeriodWinnerTask(perid, gid, periodWinnerService);
+        PeriodWinnerTask periodWinnerTask = new PeriodWinnerTask(perid, gid, yiYuanDuoBaoService);
 
         try {
             TaskExecutorFactory.getInstance().submitTask(periodWinnerTask);

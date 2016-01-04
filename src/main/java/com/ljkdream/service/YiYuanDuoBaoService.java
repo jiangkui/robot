@@ -1,28 +1,31 @@
 package com.ljkdream.service;
 
+import com.ljkdream.dao.GoodsMapper;
 import com.ljkdream.dao.PeriodWinnerMapper;
 import com.ljkdream.dao.UserMapper;
-import com.ljkdream.model.PeriodWinner;
-import com.ljkdream.model.PeriodWinnerExample;
-import com.ljkdream.model.User;
-import com.ljkdream.model.UserExample;
+import com.ljkdream.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * PeriodWinnerService
  * Created by ljk on 16-1-3.
  */
 @Service
-public class PeriodWinnerService {
+public class YiYuanDuoBaoService {
 
     @Autowired
     private PeriodWinnerMapper periodWinnerDao;
 
     @Autowired
     private UserMapper userDao;
+
+    @Autowired
+    private GoodsMapper goodsDao;
 
     public int savePeriodWinnerByNotExist(PeriodWinner periodWinner) {
         PeriodWinner periodWinner1 = this.queryPeriodWinnerByPeriod(periodWinner.getPeriod());
@@ -85,6 +88,40 @@ public class PeriodWinnerService {
         List<PeriodWinner> periodWinnerList = periodWinnerDao.selectByExample(periodWinnerExample);
         if (periodWinnerList.size() > 0) {
             return periodWinnerList.get(0);
+        }
+
+        return null;
+    }
+
+    private Map<Long, Long> goodsIdMap = new HashMap<>();
+
+    public int saveGoodsByNotExist(Goods goods) {
+        Long gid = goods.getGid();
+        if (goodsIdMap.containsKey(gid)) {
+            return 1;
+        }
+
+        Goods goods1 = queryGoodsByGid(gid);
+        if (goods1 != null) {
+            goodsIdMap.put(gid, gid);
+            return 1;
+        }
+
+        int insert = goodsDao.insert(goods);
+        if (insert > 0) {
+            goodsIdMap.put(gid, gid);
+        }
+
+        return insert;
+    }
+
+    private Goods queryGoodsByGid(Long gid) {
+        GoodsExample goodsExample = new GoodsExample();
+        goodsExample.createCriteria().andGidEqualTo(gid);
+
+        List<Goods> goodsList = goodsDao.selectByExample(goodsExample);
+        if (goodsList.size() > 0) {
+            return goodsList.get(0);
         }
 
         return null;

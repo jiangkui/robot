@@ -43,3 +43,29 @@ CREATE TABLE `period_winner` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `period_UNIQUE` (`period`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE `goods` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `gid` bigint(20) DEFAULT NULL COMMENT '商品id',
+  `gname` varchar(100) DEFAULT NULL COMMENT '商品名称',
+  `price` varchar(100) DEFAULT NULL COMMENT '总须人数',
+  `desc_str` varchar(100) DEFAULT NULL COMMENT '商品详情',
+  `gpic` varchar(500) DEFAULT NULL COMMENT '图片数组（只有首图）',
+  `show_pic_num` varchar(100) DEFAULT NULL COMMENT '商品主页显示几张图',
+  `buy_unit` varchar(100) DEFAULT NULL COMMENT '购买单位（10元专区）',
+  `price_base` varchar(100) DEFAULT NULL COMMENT '',
+  `tag` varchar(100) DEFAULT NULL COMMENT '',
+  `price_type` varchar(100) DEFAULT NULL COMMENT '',
+  `property` varchar(100) DEFAULT NULL COMMENT '',
+  `price_unit` varchar(100) DEFAULT NULL COMMENT '',
+  `regular_buy_max` varchar(100) DEFAULT NULL COMMENT '',
+  `buyable` varchar(100) DEFAULT NULL COMMENT '',
+  `brand` varchar(100) DEFAULT NULL COMMENT '',
+  `wish_setable` varchar(100) DEFAULT NULL COMMENT '',
+  `type_id` varchar(100) DEFAULT NULL COMMENT '',
+  `goods_type` varchar(100) DEFAULT NULL COMMENT '',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  `modify_time` datetime DEFAULT NULL COMMENT '修改时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `gid_UNIQUE` (`gid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
