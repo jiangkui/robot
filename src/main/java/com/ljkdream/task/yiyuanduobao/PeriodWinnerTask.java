@@ -59,14 +59,6 @@ public class PeriodWinnerTask extends AbstractBaseTask {
     public void execute() {
         for (int i = 0; i < executeNum; i++) {
             try {
-                //如果该 period 已经抓去过，则获取该商品最早的期数，尝试继续抓取
-                PeriodWinner periodWinner = yiYuanDuoBaoService.queryPeriodWinnerByPeriod(period);
-                if (periodWinner != null) {
-                    logger.info("改期已经抓取完毕！ 期号：" + period);
-                    PeriodWinner oldDate = yiYuanDuoBaoService.queryOldPeriodWinnerByGid(gid);
-                    period = oldDate.getPeriod();
-                }
-
                 //沉睡一段时间
                 sleep();
 
@@ -87,17 +79,74 @@ public class PeriodWinnerTask extends AbstractBaseTask {
                     retryNum = 0;
                 }
 
-                //解析json 存储数据
-                GidAndPeriodId gidAndPeriodId = analysisJsonAndSaveDate(jsonObject);
+                //未开奖
+                if (!hasPeriodWinner(jsonObject)) {
+                    continue;
+                }
+
+                //获取 gid 和 periodId
+                GidAndPeriodId gidAndPeriodId = analysisJson(jsonObject);
+
+                //如果该 period 已经抓去过，则获取该商品最早的期数，尝试继续抓取
+                PeriodWinner periodWinner = yiYuanDuoBaoService.queryPeriodWinnerByPeriod(gidAndPeriodId.getPeriod());
+                if (periodWinner != null) {
+                    logger.info("改期已经抓取完毕！ 期号：" + period);
+                    PeriodWinner oldDate = yiYuanDuoBaoService.queryOldPeriodWinnerByGid(gid);
+                    period = oldDate.getPeriod();
+                    continue;
+                }
+
+                //存储数据
+                saveDate(jsonObject);
 
                 //设置下一次请求的数据
                 setNextRequestDate(gidAndPeriodId);
-
-
             } catch (Exception e) {
                 logger.error("报错了" + e.getMessage());
             }
         }
+    }
+
+    /**
+     * 是否已经开奖
+     * @param jsonObject json
+     * @return true 已开奖 false 未开奖
+     */
+    private boolean hasPeriodWinner(JSONObject jsonObject) {
+        JSONObject result = jsonObject.getJSONObject("result");
+        JSONObject periodWinnerJson = result.getJSONObject("periodWinner");
+        if (periodWinnerJson.size() == 0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    private GidAndPeriodId analysisJson(JSONObject jsonObject) {
+        JSONObject result = jsonObject.getJSONObject("result");
+        JSONObject periodWinnerJson = result.getJSONObject("periodWinner");
+        if (periodWinnerJson.size() == 0) {
+            JSONObject periodIng = result.getJSONObject("periodIng");
+            JSONObject periodWillReveal = result.getJSONObject("periodWillReveal");
+            long period = 0;
+            long gid = 0;
+
+            if (periodIng.size() != 0) {
+                period = periodIng.getLong("period");
+                gid = periodIng.getJSONObject("goods").getLong("gid");
+                logger.info("正在投注! period:" + period + " gid:" + gid);
+            } else {
+                period = periodWillReveal.getLong("period");
+                gid = periodWillReveal.getJSONObject("goods").getLong("gid");
+                logger.info("等待开奖! period:" + period + " gid:" + gid);
+            }
+
+            return new GidAndPeriodId(gid, period);
+        }
+
+        PeriodWinner periodWinner = cratePeriodWinner(periodWinnerJson);
+
+        return new GidAndPeriodId(periodWinner.getGid(), periodWinner.getPeriod());
     }
 
     /**
@@ -138,27 +187,9 @@ public class PeriodWinnerTask extends AbstractBaseTask {
         }
     }
 
-    private GidAndPeriodId analysisJsonAndSaveDate(JSONObject jsonObject) {
+    private void saveDate(JSONObject jsonObject) {
         JSONObject result = jsonObject.getJSONObject("result");
         JSONObject periodWinnerJson = result.getJSONObject("periodWinner");
-        if (periodWinnerJson.size() == 0) {
-            JSONObject periodIng = result.getJSONObject("periodIng");
-            JSONObject periodWillReveal = result.getJSONObject("periodWillReveal");
-            long period = 0;
-            long gid = 0;
-
-            if (periodIng.size() != 0) {
-                period = periodIng.getLong("period");
-                gid = periodIng.getJSONObject("goods").getLong("gid");
-                logger.info("正在投注! period:" + period + " gid:" + gid);
-            } else {
-                period = periodWillReveal.getLong("period");
-                gid = periodWillReveal.getJSONObject("goods").getLong("gid");
-                logger.info("等待开奖! period:" + period + " gid:" + gid);
-            }
-
-            return new GidAndPeriodId(gid, period);
-        }
 
         JSONObject owner = periodWinnerJson.getJSONObject("owner");
         JSONObject goodsJson = periodWinnerJson.getJSONObject("goods");
@@ -178,7 +209,6 @@ public class PeriodWinnerTask extends AbstractBaseTask {
         yiYuanDuoBaoService.savePeriodWinnerByNotExist(periodWinner);
         yiYuanDuoBaoService.saveUserByNotExist(user);
         yiYuanDuoBaoService.saveGoodsByNotExist(goods);
-        return new GidAndPeriodId(periodWinner.getGid(), periodWinner.getPeriod());
     }
 
     private Goods createGoods(JSONObject json) {
