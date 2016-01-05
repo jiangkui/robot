@@ -29,8 +29,9 @@ public class AllPeriodWinnerTask extends AbstractBaseTask {
         List<RelationGoodsPeriod> list = yiYuanDuoBaoService.queryAllRelationGoodsPeriod();
 
         for (RelationGoodsPeriod relationGoodsPeriod : list) {
-            PeriodWinnerTask periodWinnerTask = new PeriodWinnerTask(relationGoodsPeriod.getGid(),
-                    relationGoodsPeriod.getPeriod(), yiYuanDuoBaoService);
+
+            PeriodWinnerTask periodWinnerTask = new PeriodWinnerTask(relationGoodsPeriod.getPeriod(),
+                    relationGoodsPeriod.getGid(), yiYuanDuoBaoService);
 
             try {
                 logger.info("【提交抓取任务】" + periodWinnerTask);

@@ -18,7 +18,7 @@ public class TaskListener implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
-        executor = Executors.newFixedThreadPool(4);
+        executor = Executors.newFixedThreadPool(1);
         BoundedExecutor boundedExecutor = new BoundedExecutor(executor, 10);
 
         TaskExecutorFactory.registerTaskExecutor(boundedExecutor);

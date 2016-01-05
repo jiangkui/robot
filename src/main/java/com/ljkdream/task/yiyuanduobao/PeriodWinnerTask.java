@@ -57,16 +57,19 @@ public class PeriodWinnerTask extends AbstractBaseTask {
 
     @Override
     public void execute() {
-        //如果该 period 已经抓去过，则获取该商品最早的期数，尝试继续抓取
-        PeriodWinner periodWinner = yiYuanDuoBaoService.queryPeriodWinnerByPeriod(period);
-        if (periodWinner != null) {
-            logger.info("改期已经抓取完毕！ 期号：" + period);
-            PeriodWinner oldDate = yiYuanDuoBaoService.queryOldPeriodWinnerByGid(gid);
-            period = oldDate.getPeriod();
-        }
-
         for (int i = 0; i < executeNum; i++) {
             try {
+                //如果该 period 已经抓去过，则获取该商品最早的期数，尝试继续抓取
+                PeriodWinner periodWinner = yiYuanDuoBaoService.queryPeriodWinnerByPeriod(period);
+                if (periodWinner != null) {
+                    logger.info("改期已经抓取完毕！ 期号：" + period);
+                    PeriodWinner oldDate = yiYuanDuoBaoService.queryOldPeriodWinnerByGid(gid);
+                    period = oldDate.getPeriod();
+                }
+
+                //沉睡一段时间
+                sleep();
+
                 String url = obtainUrl();
                 String resultStr = HttpClientUtil.executeUrl(url);
                 JSONObject jsonObject = JSONObject.fromObject(resultStr);
@@ -90,8 +93,6 @@ public class PeriodWinnerTask extends AbstractBaseTask {
                 //设置下一次请求的数据
                 setNextRequestDate(gidAndPeriodId);
 
-                //沉睡一段时间
-                sleep();
 
             } catch (Exception e) {
                 logger.error("报错了" + e.getMessage());
@@ -177,7 +178,7 @@ public class PeriodWinnerTask extends AbstractBaseTask {
         yiYuanDuoBaoService.savePeriodWinnerByNotExist(periodWinner);
         yiYuanDuoBaoService.saveUserByNotExist(user);
         yiYuanDuoBaoService.saveGoodsByNotExist(goods);
-        return new GidAndPeriodId(gid, period);
+        return new GidAndPeriodId(periodWinner.getGid(), periodWinner.getPeriod());
     }
 
     private Goods createGoods(JSONObject json) {
