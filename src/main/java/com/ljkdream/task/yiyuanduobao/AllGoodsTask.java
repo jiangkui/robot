@@ -18,6 +18,12 @@ import java.util.regex.Pattern;
 
 /**
  * 抓取所有商品任务
+ *
+ * 获取网易所有的在线商品数据，以及当前商品的期数。
+ *
+ * 新增商品，则插入
+ * 旧商品，则更新期数
+ *
  * Created by ljk on 16-1-4.
  */
 public class AllGoodsTask extends AbstractBaseTask {

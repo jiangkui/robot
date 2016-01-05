@@ -3,6 +3,7 @@ package com.ljkdream.controller;
 import com.ljkdream.entity.UnifiedResponse;
 import com.ljkdream.service.YiYuanDuoBaoService;
 import com.ljkdream.task.yiyuanduobao.AllGoodsTask;
+import com.ljkdream.task.yiyuanduobao.AllPeriodWinnerTask;
 import com.ljkdream.task.yiyuanduobao.PeriodWinnerTask;
 import com.ljkdream.task.base.TaskExecutorFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +16,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * Created by ljk on 16-1-3.
  */
 @Controller
-@RequestMapping("period-winner")
-public class PeriodWinnerController {
+@RequestMapping("yiyuanduobao")
+public class YiYuanDuoBaoController {
 
     @Autowired
     private YiYuanDuoBaoService yiYuanDuoBaoService;
@@ -35,7 +36,6 @@ public class PeriodWinnerController {
         return new UnifiedResponse();
     }
 
-
     @ResponseBody
     @RequestMapping("grab-all-goods")
     public UnifiedResponse grabAllGoods(int page) {
@@ -44,6 +44,20 @@ public class PeriodWinnerController {
 
         try {
             TaskExecutorFactory.getInstance().submitTask(allGoodsTask);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        return new UnifiedResponse();
+    }
+
+    @ResponseBody
+    @RequestMapping("grab-all-period-winner")
+    public UnifiedResponse grabAllPeriodGoods() {
+        AllPeriodWinnerTask allPeriodWinnerTask = new AllPeriodWinnerTask(yiYuanDuoBaoService);
+
+        try {
+            TaskExecutorFactory.getInstance().submitTask(allPeriodWinnerTask);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

@@ -178,4 +178,12 @@ public class YiYuanDuoBaoService {
 
         return null;
     }
+
+    public List<RelationGoodsPeriod> queryAllRelationGoodsPeriod() {
+        RelationGoodsPeriodExample example = new RelationGoodsPeriodExample();
+
+        List<RelationGoodsPeriod> list = relationGoodsPeriodMapper.selectByExample(example);
+
+        return list;
+    }
 }

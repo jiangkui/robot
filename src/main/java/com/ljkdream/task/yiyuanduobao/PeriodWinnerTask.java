@@ -14,12 +14,19 @@ import org.slf4j.LoggerFactory;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.ListIterator;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 开奖任务
+ * 单个商品开奖结果数据抓取任务
+ * <p/>
+ * 指定某一个商品 id 和期号，从这个商品的设置期号开始向后抓取数据。
+ * 如果请求失败，将更换 http代理，重新尝试抓取。
+ * <p/>
+ * 遇到一下情况会放弃任务：
+ * - 当前抓取的期数，之前已经抓去过了
+ * - 全部抓取完毕或尝试次数超过 DEFAULT_RETRY_NUM 为止。
+ * <p/>
  * Created by ljk on 16-1-3.
  */
 public class PeriodWinnerTask extends AbstractBaseTask {
@@ -28,67 +35,109 @@ public class PeriodWinnerTask extends AbstractBaseTask {
     public static final String BASE_URL = "http://1.163.com/goods/getPeriod.do?";
     private static Logger logger = LoggerFactory.getLogger(PeriodWinnerTask.class);
 
-    private YiYuanDuoBaoService yiYuanDuoBaoService;
-    private Long perid;
+    private Long period;
     private Long gid;
+    private YiYuanDuoBaoService yiYuanDuoBaoService;
+    private Integer executeNum; //该任务执行次数
 
-    public PeriodWinnerTask(Long perid, Long gid, YiYuanDuoBaoService yiYuanDuoBaoService) {
-        this.perid = perid;
+    private static Random random = new Random();
+    private int retryNum = 0; //更换代理重试请求的次数
+    public static final int DEFAULT_RETRY_NUM = 2; //超过重试次数就放弃
+
+    public PeriodWinnerTask(Long period, Long gid, YiYuanDuoBaoService yiYuanDuoBaoService) {
+        this(period, gid, yiYuanDuoBaoService, Integer.MAX_VALUE);
+    }
+
+    public PeriodWinnerTask(Long period, Long gid, YiYuanDuoBaoService yiYuanDuoBaoService, Integer executeNum) {
+        this.period = period;
         this.gid = gid;
+        this.executeNum = executeNum;
         this.yiYuanDuoBaoService = yiYuanDuoBaoService;
     }
 
     @Override
     public void execute() {
-        //继续抓取
-        PeriodWinner periodWinner = yiYuanDuoBaoService.queryOldPeriodWinnerByGid(gid);
+        //如果该 period 已经抓去过，则获取该商品最早的期数，尝试继续抓取
+        PeriodWinner periodWinner = yiYuanDuoBaoService.queryPeriodWinnerByPeriod(period);
         if (periodWinner != null) {
-            perid = periodWinner.getPeriod();
+            logger.info("改期已经抓取完毕！ 期号：" + period);
+            PeriodWinner oldDate = yiYuanDuoBaoService.queryOldPeriodWinnerByGid(gid);
+            period = oldDate.getPeriod();
         }
 
-        Random random = new Random();
-        int exist = 0;
-        while (true) {
-//        for (int i = 0; i < 1; i++) {
-
-            String url = obtainUrl();
+        for (int i = 0; i < executeNum; i++) {
             try {
+                String url = obtainUrl();
                 String resultStr = HttpClientUtil.executeUrl(url);
-
                 JSONObject jsonObject = JSONObject.fromObject(resultStr);
 
                 Object code = jsonObject.get("code");
 
-                if (code == null) {
-                    logger.error("code = null");
-                    continue;
-                }
-
-                Integer codeInt = (Integer) code;
-
-                if (codeInt != 0) {
-                    //被屏蔽了，切换代理
-                    exist++;
-                    logger.error("code != 0 次数：" + exist);
-                    if (exist >= 3) {
-                        break;
+                //目标服务器返回结果异常
+                if (code == null || ((Integer) code) != 0) {
+                    if (changeProxyRetry()) { //更换http 代理，重试
+                        continue;
+                    } else {
+                        return;
                     }
-                    continue;
+                } else {
+                    retryNum = 0;
                 }
 
-                analysisJsonAndSaveDate(jsonObject, this);
+                //解析json 存储数据
+                GidAndPeriodId gidAndPeriodId = analysisJsonAndSaveDate(jsonObject);
 
-                int sleep = random.nextInt(100);
-                logger.info("沉睡：" + sleep + "毫秒");
-                TimeUnit.MILLISECONDS.sleep(sleep);
+                //设置下一次请求的数据
+                setNextRequestDate(gidAndPeriodId);
+
+                //沉睡一段时间
+                sleep();
+
             } catch (Exception e) {
                 logger.error("报错了" + e.getMessage());
-//                e.printStackTrace();
             }
         }
     }
 
-    private void analysisJsonAndSaveDate(JSONObject jsonObject, PeriodWinnerTask periodWinnerTask) {
+    /**
+     * 设置下次请求的数据
+     *
+     * @param gidAndPeriodId gid 和 periodId
+     */
+    private void setNextRequestDate(GidAndPeriodId gidAndPeriodId) {
+        this.setGid(gidAndPeriodId.getGid());
+        this.setPeriod(gidAndPeriodId.getPeriod());
+    }
+
+    /**
+     * 更换代理重试
+     *
+     * @return true 可以继续 false 超过重试次数
+     */
+    private boolean changeProxyRetry() {
+        //被屏蔽了，切换代理
+        retryNum++;
+        logger.error("被屏蔽了或被限制，重试次数：" + retryNum);
+        if (retryNum >= DEFAULT_RETRY_NUM) {
+            logger.error("被屏蔽！ ");
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 暂停一段时间
+     */
+    private void sleep() {
+        try {
+            int sleep = random.nextInt(500) + 1000;
+            logger.info("沉睡：" + sleep + "毫秒");
+            TimeUnit.MILLISECONDS.sleep(sleep);
+        } catch (InterruptedException ignored) {
+        }
+    }
+
+    private GidAndPeriodId analysisJsonAndSaveDate(JSONObject jsonObject) {
         JSONObject result = jsonObject.getJSONObject("result");
         JSONObject periodWinnerJson = result.getJSONObject("periodWinner");
         if (periodWinnerJson.size() == 0) {
@@ -107,10 +156,7 @@ public class PeriodWinnerTask extends AbstractBaseTask {
                 logger.info("等待开奖! period:" + period + " gid:" + gid);
             }
 
-            //设置本次的数据
-            periodWinnerTask.setGid(gid);
-            periodWinnerTask.setPerid(period);
-            return;
+            return new GidAndPeriodId(gid, period);
         }
 
         JSONObject owner = periodWinnerJson.getJSONObject("owner");
@@ -128,13 +174,10 @@ public class PeriodWinnerTask extends AbstractBaseTask {
         goods.setCreateTime(now);
         goods.setModifyTime(now);
 
-        //设置本次的数据
-        periodWinnerTask.setGid(periodWinner.getGid());
-        periodWinnerTask.setPerid(periodWinner.getPeriod());
-
         yiYuanDuoBaoService.savePeriodWinnerByNotExist(periodWinner);
         yiYuanDuoBaoService.saveUserByNotExist(user);
         yiYuanDuoBaoService.saveGoodsByNotExist(goods);
+        return new GidAndPeriodId(gid, period);
     }
 
     private Goods createGoods(JSONObject json) {
@@ -200,18 +243,18 @@ public class PeriodWinnerTask extends AbstractBaseTask {
     public String obtainUrl() {
         StringBuilder sb = new StringBuilder();
         //&navigation=-1 表示前一期 =1 表示后一期
-        sb.append(BASE_URL).append("gid=").append(gid).append("&period=").append(perid).append("&navigation=-1");
+        sb.append(BASE_URL).append("gid=").append(gid).append("&period=").append(period).append("&navigation=-1");
 
         logger.info("请求地址：" + sb.toString());
         return sb.toString();
     }
 
-    public Long getPerid() {
-        return perid;
-    }
-
-    public void setPerid(Long perid) {
-        this.perid = perid;
+    @Override
+    public String toString() {
+        return "单商品抓取任务{" +
+                "gid=" + gid +
+                ", period=" + period +
+                '}';
     }
 
     public Long getGid() {
@@ -220,5 +263,42 @@ public class PeriodWinnerTask extends AbstractBaseTask {
 
     public void setGid(Long gid) {
         this.gid = gid;
+    }
+
+    public Long getPeriod() {
+        return period;
+    }
+
+    public void setPeriod(Long period) {
+        this.period = period;
+    }
+}
+
+/**
+ * gid 和 periodId 的一个包装对象。用来传递 这俩id数据
+ */
+class GidAndPeriodId {
+    private long gid;
+    private long period;
+
+    public GidAndPeriodId(long gid, long period) {
+        this.gid = gid;
+        this.period = period;
+    }
+
+    public long getGid() {
+        return gid;
+    }
+
+    public void setGid(long gid) {
+        this.gid = gid;
+    }
+
+    public long getPeriod() {
+        return period;
+    }
+
+    public void setPeriod(long period) {
+        this.period = period;
     }
 }
