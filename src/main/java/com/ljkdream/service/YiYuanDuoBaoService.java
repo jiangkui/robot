@@ -92,7 +92,7 @@ public class YiYuanDuoBaoService {
     public PeriodWinner queryOldPeriodWinnerByGid(Long gid) {
         PeriodWinnerExample periodWinnerExample = new PeriodWinnerExample();
         periodWinnerExample.createCriteria().andGidEqualTo(gid);
-        periodWinnerExample.setOrderByClause("id desc limit 1");
+        periodWinnerExample.setOrderByClause("period limit 1");
 
         List<PeriodWinner> periodWinnerList = periodWinnerMapper.selectByExample(periodWinnerExample);
         if (periodWinnerList.size() > 0) {
