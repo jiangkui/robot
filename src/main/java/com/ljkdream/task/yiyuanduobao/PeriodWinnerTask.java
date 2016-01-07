@@ -169,7 +169,7 @@ public class PeriodWinnerTask extends AbstractBaseTask {
         retryNum++;
         logger.error("被屏蔽了或被限制，重试次数：" + retryNum);
         if (retryNum >= DEFAULT_RETRY_NUM) {
-            logger.error("被屏蔽！ ");
+            logger.error("抓取完毕！ ");
             return false;
         }
         return true;
@@ -180,7 +180,7 @@ public class PeriodWinnerTask extends AbstractBaseTask {
      */
     private void sleep() {
         try {
-            int sleep = random.nextInt(500) + 1000;
+            int sleep = random.nextInt(200);
             logger.info("沉睡：" + sleep + "毫秒");
             TimeUnit.MILLISECONDS.sleep(sleep);
         } catch (InterruptedException ignored) {
