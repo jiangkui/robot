@@ -1,6 +1,9 @@
 package com.ljkdream.task.base;
 
-import java.util.concurrent.Executor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.Semaphore;
 
@@ -10,8 +13,9 @@ import java.util.concurrent.Semaphore;
  */
 public class BoundedExecutor {
 
-    private final Executor executor;
+    private final ExecutorService executorService;
     private final Semaphore semaphore; //用来控制线程池中可排队的任务数量
+    private Logger logger = LoggerFactory.getLogger(BoundedExecutor.class);
 
     /**
      * 构造方法
@@ -19,8 +23,8 @@ public class BoundedExecutor {
      * @param executor 执行者
      * @param bound    可排队的任务数量，满了之后将会阻塞
      */
-    public BoundedExecutor(Executor executor, int bound) {
-        this.executor = executor;
+    public BoundedExecutor(ExecutorService executor, int bound) {
+        this.executorService = executor;
         this.semaphore = new Semaphore(bound);
     }
 
@@ -28,7 +32,12 @@ public class BoundedExecutor {
         semaphore.acquire();
 
         try {
-            executor.execute(new Runnable() {
+            if (executorService.isShutdown()) {
+                logger.warn("线程池已经关闭！将抛弃任务：" + task.toString());
+                return;
+            }
+
+            executorService.execute(new Runnable() {
                 @Override
                 public void run() {
                     try {
