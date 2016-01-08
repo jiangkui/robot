@@ -2,20 +2,21 @@ package com.ljkdream.util;
 
 import com.ljkdream.exception.HttpException;
 import com.ljkdream.exception.HttpStatusException;
-import org.apache.http.Header;
-import org.apache.http.HttpEntity;
-import org.apache.http.NameValuePair;
-import org.apache.http.StatusLine;
+import org.apache.http.*;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -114,32 +115,7 @@ public class HttpClientUtil {
         return entityString;
     }
 
-    public static final String CHECK_REGISTER_EXIST_URL = "http://www.letou360.com/promotion/checkUser";
-
     public static void main(String[] args) {
-        try {
 
-            List<NameValuePair> params = new ArrayList<NameValuePair>();
-            params.add(new BasicNameValuePair("params", "{'mobile':'18600363402'}"));
-
-            String ss = HttpClientUtil.execute(CHECK_REGISTER_EXIST_URL, params);
-
-
-            JSONObject jsonObject = new JSONObject(ss);
-            String message = "";
-            if (jsonObject.get("message") != null) {
-                message = (String) jsonObject.get("message");
-                if ("exists".equals(message)) {
-                    System.out.println("用户已注册");
-                } else {
-                    System.out.println("用户没注册");
-                }
-            }
-
-            System.out.println(jsonObject.toString());
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }
