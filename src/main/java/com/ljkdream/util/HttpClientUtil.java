@@ -8,6 +8,7 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -116,6 +117,44 @@ public class HttpClientUtil {
     }
 
     public static void main(String[] args) {
+        // 创建HttpClientBuilder
+        HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+        // HttpClient
+        CloseableHttpClient closeableHttpClient = httpClientBuilder.build();
+        // 依次是目标请求地址，端口号,协议类型
+//        HttpHost target = new HttpHost("www.baidu.com", 80, "http");
+        HttpHost target = new HttpHost("www.google.com", 80, "http");
+        // 依次是代理地址，代理端口号，协议类型
+        HttpHost proxy = new HttpHost("121.120.80.215", 80, "http");
+        RequestConfig config = RequestConfig.custom().setProxy(proxy).build();
 
+        // 请求地址
+//        HttpPost httpPost = new HttpPost("http://www.baidu.com");
+        HttpPost httpPost = new HttpPost("http://www.google.com");
+        httpPost.setConfig(config);
+        // 创建参数队列
+        List<NameValuePair> formparams = new ArrayList<NameValuePair>();
+        // 参数名为pid，值是2
+//        formparams.add(new BasicNameValuePair("wd", "%E5%85%8D%E8%B4%B9%E4%BB%A3%E7%90%86%E6%9C%8D%E5%8A%A1%E5%99%A8"));
+
+        UrlEncodedFormEntity entity;
+        try {
+            entity = new UrlEncodedFormEntity(formparams, "UTF-8");
+            httpPost.setEntity(entity);
+            CloseableHttpResponse response = closeableHttpClient.execute(
+                    target, httpPost);
+            // getEntity()
+            HttpEntity httpEntity = response.getEntity();
+            if (httpEntity != null) {
+                // 打印响应内容
+                System.out.println("response:"
+                        + EntityUtils.toString(httpEntity, "UTF-8"));
+            }
+            // 释放资源
+            closeableHttpClient.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
+
