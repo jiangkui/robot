@@ -1,5 +1,9 @@
 package com.ljkdream.schedule;
 
+import com.ljkdream.service.ProxyServiceIpAddressService;
+import com.ljkdream.task.ProxyService.CnProxyComTask;
+import com.ljkdream.task.base.TaskExecutorFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -10,8 +14,19 @@ import org.springframework.stereotype.Component;
 @Component
 public class CnProxyComSchedule {
 
-    @Scheduled(cron = "0 30 9 * * ?")
-    public void execute() {
+    @Autowired
+    private ProxyServiceIpAddressService proxyServiceIpAddressService;
 
+    @Scheduled(cron = "0 */10 * * * ?")
+    public void execute() {
+        CnProxyComTask cn = new CnProxyComTask(CnProxyComTask.REQUEST_CN_URL, proxyServiceIpAddressService);
+        CnProxyComTask other = new CnProxyComTask(CnProxyComTask.REQUEST_INTERNATIONAL_URL, proxyServiceIpAddressService);
+
+        try {
+            TaskExecutorFactory.getInstance().submitTask(cn);
+            TaskExecutorFactory.getInstance().submitTask(other);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

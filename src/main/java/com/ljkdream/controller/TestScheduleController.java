@@ -41,7 +41,7 @@ public class TestScheduleController {
     @ResponseBody
     @RequestMapping("proxy")
     public UnifiedResponse proxy() {
-        CnProxyComTask cnProxyComTask = new CnProxyComTask(CnProxyComTask.REQUEST_CN_URL, proxyServiceIpAddressService);
+        CnProxyComTask cnProxyComTask = new CnProxyComTask(CnProxyComTask.REQUEST_INTERNATIONAL_URL, proxyServiceIpAddressService);
 
         try {
             TaskExecutorFactory.getInstance().submitTask(cnProxyComTask);

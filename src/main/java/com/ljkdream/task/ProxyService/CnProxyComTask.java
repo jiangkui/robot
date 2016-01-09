@@ -9,6 +9,7 @@ import com.ljkdream.task.base.AbstractBaseTask;
 import com.ljkdream.util.HttpClientUtil;
 import com.ljkdream.util.RegexUtil;
 import org.apache.commons.lang.StringUtils;
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -55,6 +56,9 @@ public class CnProxyComTask extends AbstractBaseTask {
 
             List<ProxyServerIpAddress> proxyList = resolve(result);
 
+            if (proxyList.size() > 0) {
+                logger.info("成功抓取："+proxyList.size() + "条数据");
+            }
             proxyService.saveOrUpdate(proxyList);
         } catch (HttpException | HttpStatusException e) {
             logger.error("http 请求失败！");
@@ -65,8 +69,14 @@ public class CnProxyComTask extends AbstractBaseTask {
     private List<ProxyServerIpAddress> resolve(String result) {
         List<ProxyServerIpAddress> proxyList = new ArrayList<>();
 
-        Document document = new Document(result);
-        Elements elementsByClass = document.getElementsByClass("table-container");
+        Document document = Jsoup.parse(result);
+
+        Elements elementsByClass;
+        if (this.requestUrl.equals(REQUEST_CN_URL)) {
+            elementsByClass = document.getElementsByClass("table-container");
+        } else {
+            elementsByClass = document.getElementsByClass("sortable");
+        }
 
         for (Element element : elementsByClass) {
             Elements trs = element.getElementsByTag("tr");
@@ -81,7 +91,12 @@ public class CnProxyComTask extends AbstractBaseTask {
 
                 String ip = tds.get(0).html();
                 if (RegexUtil.isIpAddress(ip)) {
-                    ProxyServerIpAddress proxyServerIpAddress = createProxyServerIpAddress(tds);
+                    ProxyServerIpAddress proxyServerIpAddress;
+                    if (this.requestUrl.equals(REQUEST_CN_URL)) {
+                        proxyServerIpAddress = createProxyServerIpAddressByCN(tds);
+                    } else {
+                        proxyServerIpAddress = createProxyServerIpAddressByINTERNATIONAL(tds);
+                    }
                     if (proxyServerIpAddress != null) {
                         proxyList.add(proxyServerIpAddress);
                     }
@@ -92,14 +107,52 @@ public class CnProxyComTask extends AbstractBaseTask {
         return proxyList;
     }
 
-    private ProxyServerIpAddress createProxyServerIpAddress(Elements elements) {
+    private ProxyServerIpAddress createProxyServerIpAddressByCN(Elements elements) {
         ProxyServerIpAddress proxyServerIpAddress = new ProxyServerIpAddress();
 
         try {
             String ip = elements.get(0).html();
             int port = Integer.parseInt(elements.get(1).html());
             String address = elements.get(2).html();
-            int speed = Integer.parseInt(elements.get(3).html());
+            int speed = 0;
+            Elements strong = elements.get(3).getElementsByTag("strong");
+            String str = strong.toString();
+            int width = str.indexOf("width")+ 6;
+            int bai = str.indexOf("%");
+            String speedStr = str.substring(width, bai).trim();
+            speed = Integer.parseInt(speedStr);
+
+            String domain = this.obtainCountryDomain(address);
+            Date date = new Date();
+
+            proxyServerIpAddress.setIp(ip);
+            proxyServerIpAddress.setPort(port);
+            proxyServerIpAddress.setCountryDomain(domain);
+            proxyServerIpAddress.setStatus(ProxyServerIpAddress.STATUS_NORMAL);
+            proxyServerIpAddress.setAddress(address);
+            proxyServerIpAddress.setSpeed(speed);
+            proxyServerIpAddress.setSpeedLevel(ProxyServerIpAddress.level(speed));
+            proxyServerIpAddress.setProxyIdentityType(ProxyServerIpAddress.TYPE_THREE);
+            proxyServerIpAddress.setCreateTime(date);
+            proxyServerIpAddress.setModifyTime(date);
+        } catch (Exception e) {
+            return null;
+        }
+
+        return proxyServerIpAddress;
+    }
+
+    private ProxyServerIpAddress createProxyServerIpAddressByINTERNATIONAL(Elements elements) {
+        ProxyServerIpAddress proxyServerIpAddress = new ProxyServerIpAddress();
+
+        try {
+            String ip = elements.get(0).html();
+            int port = Integer.parseInt(elements.get(1).html());
+            String address = elements.get(3).html();
+            int speed = 0;
+            String html = elements.get(4).html();
+            String s = html.split("毫秒")[0].trim();
+            speed = Integer.parseInt(s);
 
             String domain = this.obtainCountryDomain(address);
             Date date = new Date();
@@ -138,5 +191,14 @@ public class CnProxyComTask extends AbstractBaseTask {
     @Override
     public String toString() {
         return "抓取代理IP任务：http://cn-proxy.com/";
+    }
+
+    public static void main(String[] args) {
+        String str = "<strong class=\"bar\" style=\"width: 91%; background:#00dd00;\"><span></span></strong>";
+        int width = str.indexOf("width")+ 6;
+        int bai = str.indexOf("%");
+        String substring = str.substring(width, bai).trim();
+
+        System.out.println("substring = " + substring);
     }
 }

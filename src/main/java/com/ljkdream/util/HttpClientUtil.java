@@ -127,7 +127,7 @@ public class HttpClientUtil {
     public static String execute(String requestUrl, List<CountryDomain> proxyList) throws HttpException, HttpStatusException {
         //通过 ThreadLocal 获得代理，如果已经存在，则返回当前代理。
 
-        HttpHost proxy = new HttpHost("191.240.201.129", 8080, "http");
+        HttpHost proxy = new HttpHost("124.244.76.175", 80, "http");
         RequestConfig requestConfig = RequestConfig.copy(baseRequestConfig).setProxy(proxy).build();
         HttpPost httpPost = new HttpPost(requestUrl);
         httpPost.setConfig(requestConfig);
