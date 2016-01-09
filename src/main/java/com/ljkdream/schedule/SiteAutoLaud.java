@@ -89,7 +89,7 @@ public class SiteAutoLaud extends AbstractSchedule {
             params.add(new BasicNameValuePair("tpid", "-1"));
             params.add(new BasicNameValuePair("_", "" + System.currentTimeMillis()));
 
-            String execute = HttpClientUtil.execute(VENUS_LIST_URL, params);
+            String execute = HttpClientUtil.executeByParams(VENUS_LIST_URL, params);
             JSONObject jsonObject = new JSONObject(execute);
 
             logger.info("获取搭配图列表成功。【start：" + start + "】【size：" + defaultSize + "】");
@@ -163,7 +163,7 @@ public class SiteAutoLaud extends AbstractSchedule {
             params.add(new BasicNameValuePair("uid", "11806706"));
             params.add(new BasicNameValuePair("token", "w6TrMZ5dhQpGOmNn"));
 
-            String execute = HttpClientUtil.execute(LAUD_VENUS_URL, params);
+            String execute = HttpClientUtil.executeByParams(LAUD_VENUS_URL, params);
             JSONObject jsonObject = new JSONObject(execute);
 
             Integer status = (Integer) jsonObject.get("status");

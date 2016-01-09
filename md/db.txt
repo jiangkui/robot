@@ -99,3 +99,16 @@ create table `proxy_server_ip_address`(
     UNIQUE KEY `UNIQUE_IP` (`IP`),
     KEY `idx_countryDomainStatus` (`country_domain`,`status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+#国际域名缩写表
+create table `country_domain`(
+    `id` bigint(20) NOT NULL AUTO_INCREMENT,
+    `country_domain` varchar(8) DEFAULT NULL COMMENT '国家域名缩写，两位大写字母。如：CN,US',
+    `country_region_zh` varchar(8) DEFAULT NULL COMMENT '国家或地区，中文',
+    `country_region_en` varchar(8) DEFAULT NULL COMMENT '国家或地区，英文',
+    PRIMARY KEY (`id`),
+    KEY `idx_countryDomain` (`country_domain`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+

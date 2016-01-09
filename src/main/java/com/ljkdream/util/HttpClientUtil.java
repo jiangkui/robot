@@ -2,26 +2,19 @@ package com.ljkdream.util;
 
 import com.ljkdream.exception.HttpException;
 import com.ljkdream.exception.HttpStatusException;
+import com.ljkdream.model.CountryDomain;
 import org.apache.http.*;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -34,7 +27,7 @@ public class HttpClientUtil {
 
     private static Logger log = Logger.getLogger(HttpClientUtil.class);
 
-    private static RequestConfig requestConfig = RequestConfig.custom()
+    private static RequestConfig baseRequestConfig = RequestConfig.custom()
             .setSocketTimeout(5000)
             .setConnectTimeout(5000)
             .setConnectionRequestTimeout(5000)
@@ -55,16 +48,17 @@ public class HttpClientUtil {
         String entityString = "";
 
         HttpPost httpPost = new HttpPost(url);
-        httpPost.setConfig(requestConfig);
+        httpPost.setConfig(baseRequestConfig);
 
         log.debug("执行HTTP 请求：" + url);
 
-        entityString = execute(httpPost, url);
+        entityString = execute(httpPost);
 
         return entityString;
     }
 
-    private static String execute(HttpPost httpPost, String url) throws HttpException, HttpStatusException {
+    private static String execute(HttpPost httpPost) throws HttpException, HttpStatusException {
+        String url = httpPost.getURI().toString();
         String result = "";
         try {
             CloseableHttpResponse response = httpClient.execute(httpPost);
@@ -87,6 +81,14 @@ public class HttpClientUtil {
             e.printStackTrace();
             log.error("网络请求模块，出错！【" + url + "】");
             throw new HttpException(url, e);
+        } finally {
+            // 释放资源
+//            try {
+//                httpClient.close();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//                log.error("释放资源出错！【" + url + "】");
+//            }
         }
 
         return result;
@@ -102,59 +104,76 @@ public class HttpClientUtil {
      * @throws HttpException
      * @throws java.io.UnsupportedEncodingException
      */
-    public static String execute(String url, List<NameValuePair> params) throws HttpStatusException, HttpException, UnsupportedEncodingException {
+    public static String executeByParams(String url, List<NameValuePair> params) throws HttpStatusException, HttpException, UnsupportedEncodingException {
         String entityString = "";
 
         HttpPost httpPost = new HttpPost(url);
-        httpPost.setConfig(requestConfig);
-        httpPost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
+        httpPost.setConfig(baseRequestConfig);
+        httpPost.setEntity(new UrlEncodedFormEntity(params, Consts.UTF_8));
 
         log.debug("执行HTTP 请求：" + url);
 
-        entityString = execute(httpPost, url);
+        entityString = execute(httpPost);
 
         return entityString;
     }
 
-    public static void main(String[] args) {
-        // 创建HttpClientBuilder
-        HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
-        // HttpClient
-        CloseableHttpClient closeableHttpClient = httpClientBuilder.build();
-        // 依次是目标请求地址，端口号,协议类型
-//        HttpHost target = new HttpHost("www.baidu.com", 80, "http");
-        HttpHost target = new HttpHost("www.google.com", 80, "ht    tp");
-        // 依次是代理地址，代理端口号，协议类型
-        HttpHost proxy = new HttpHost("121.120.80.215", 80, "http");
-        RequestConfig config = RequestConfig.custom().setProxy(proxy).build();
+    /**
+     * 执行请求
+     *
+     * @param requestUrl 请求地址
+     * @param proxyList 代理简称
+     */
+    public static String execute(String requestUrl, List<CountryDomain> proxyList) throws HttpException, HttpStatusException {
+        //通过 ThreadLocal 获得代理，如果已经存在，则返回当前代理。
 
-        // 请求地址
-//        HttpPost httpPost = new HttpPost("http://www.baidu.com");
-        HttpPost httpPost = new HttpPost("http://www.google.com");
-        httpPost.setConfig(config);
-        // 创建参数队列
-        List<NameValuePair> formparams = new ArrayList<NameValuePair>();
-        // 参数名为pid，值是2
-//        formparams.add(new BasicNameValuePair("wd", "%E5%85%8D%E8%B4%B9%E4%BB%A3%E7%90%86%E6%9C%8D%E5%8A%A1%E5%99%A8"));
+        HttpHost proxy = new HttpHost("191.240.201.129", 8080, "http");
+        RequestConfig requestConfig = RequestConfig.copy(baseRequestConfig).setProxy(proxy).build();
+        HttpPost httpPost = new HttpPost(requestUrl);
+        httpPost.setConfig(requestConfig);
 
-        UrlEncodedFormEntity entity;
-        try {
-            entity = new UrlEncodedFormEntity(formparams, "UTF-8");
-            httpPost.setEntity(entity);
-            CloseableHttpResponse response = closeableHttpClient.execute(
-                    target, httpPost);
-            // getEntity()
-            HttpEntity httpEntity = response.getEntity();
-            if (httpEntity != null) {
-                // 打印响应内容
-                System.out.println("response:"
-                        + EntityUtils.toString(httpEntity, "UTF-8"));
-            }
-            // 释放资源
-            closeableHttpClient.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        String result = execute(httpPost);
+        return result;
     }
+
+    public static void main(String[] args) {
+//        // 创建HttpClientBuilder
+//        HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+//        // HttpClient
+//        CloseableHttpClient closeableHttpClient = httpClientBuilder.build();
+//        // 依次是目标请求地址，端口号,协议类型
+//        HttpHost target = new HttpHost("http://www.google.com", 80, "http");
+//        // 依次是代理地址，代理端口号，协议类型
+//        HttpHost proxy = new HttpHost("121.120.80.215", 80, "http");
+//        RequestConfig config = RequestConfig.custom().setProxy(proxy).build();
+//
+//        // 请求地址
+//        HttpPost httpPost = new HttpPost("http://www.google.com");
+//
+//        httpPost.setConfig(config);
+//        // 创建参数队列
+//        List<NameValuePair> formparams = new ArrayList<NameValuePair>();
+//        // 参数名为pid，值是2
+////        formparams.add(new BasicNameValuePair("wd", "%E5%85%8D%E8%B4%B9%E4%BB%A3%E7%90%86%E6%9C%8D%E5%8A%A1%E5%99%A8"));
+//
+//        UrlEncodedFormEntity entity;
+//        try {
+//            entity = new UrlEncodedFormEntity(formparams, "UTF-8");
+//            httpPost.setEntity(entity);
+//            CloseableHttpResponse response = closeableHttpClient.execute(target, httpPost);
+//            // getEntity()
+//            HttpEntity httpEntity = response.getEntity();
+//            if (httpEntity != null) {
+//                // 打印响应内容
+//                System.out.println("response:"
+//                        + EntityUtils.toString(httpEntity, "UTF-8"));
+//            }
+//            // 释放资源
+//            closeableHttpClient.close();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+    }
+
 }
 

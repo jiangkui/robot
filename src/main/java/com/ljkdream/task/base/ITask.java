@@ -24,10 +24,4 @@ public interface ITask {
      * @return true 是毒丸。
      */
     boolean isPoisonPill();
-
-    /**
-     * 描述任务详情
-     * @return str
-     */
-    String toString();
 }
