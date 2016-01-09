@@ -123,7 +123,7 @@ public class HttpClientUtil {
         CloseableHttpClient closeableHttpClient = httpClientBuilder.build();
         // 依次是目标请求地址，端口号,协议类型
 //        HttpHost target = new HttpHost("www.baidu.com", 80, "http");
-        HttpHost target = new HttpHost("www.google.com", 80, "http");
+        HttpHost target = new HttpHost("www.google.com", 80, "ht    tp");
         // 依次是代理地址，代理端口号，协议类型
         HttpHost proxy = new HttpHost("121.120.80.215", 80, "http");
         RequestConfig config = RequestConfig.custom().setProxy(proxy).build();

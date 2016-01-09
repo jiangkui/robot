@@ -1,9 +1,9 @@
 #建表语句：
-CREATE DATABASE one
+CREATE DATABASE robot
   DEFAULT CHARACTER SET utf8
   COLLATE utf8_general_ci;
 
-USE one;
+USE robot;
 
 CREATE TABLE `user` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
@@ -22,7 +22,7 @@ CREATE TABLE `user` (
   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
   `modify_time` datetime DEFAULT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `cid_UNIQUE` (`cid`)
+  UNIQUE KEY `UNIQUE_cid` (`cid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `period_winner` (
@@ -41,7 +41,8 @@ CREATE TABLE `period_winner` (
   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
   `modify_time` datetime DEFAULT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `period_UNIQUE` (`period`)
+  UNIQUE KEY `UNIQUE_period` (`period`),
+  KEY `idx_gid` (`gid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `goods` (
@@ -67,7 +68,7 @@ CREATE TABLE `goods` (
   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
   `modify_time` datetime DEFAULT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `gid_UNIQUE` (`gid`)
+  UNIQUE KEY `UNIQUE_gid` (`gid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 #存储商品 -- 期号的信息
@@ -78,5 +79,23 @@ CREATE TABLE `relation_goods_period`(
   `create_time` datetime DEFAULT NULL COMMENT '创建时间',
   `modify_time` datetime DEFAULT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `gid_UNIQUE` (`gid`)
+  UNIQUE KEY `UNIQUE_gid` (`gid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+#代理服务器ip地址
+create table `proxy_server_ip_address`(
+    `id` bigint(20) NOT NULL AUTO_INCREMENT,
+    `IP` varchar(15) DEFAULT NULL COMMENT '代理服务器的ip地址',
+    `port` int(5) DEFAULT NULL COMMENT '端口号',
+    `country_domain` varchar(8) DEFAULT NULL COMMENT '国家域名缩写，两位大写字母。如：CN,US',
+    `status` int(5) DEFAULT NULL COMMENT '状态 1：正常 2：不可用',
+    `address` varchar(50) DEFAULT NULL COMMENT '服务器地址',
+    `speed` int DEFAULT NULL COMMENT '速度（毫秒）',
+    `speed_level` int DEFAULT NULL COMMENT '速度级别 1:0~500毫秒 2：500~1000毫秒 3:1~5秒 4:5秒以上',
+    `proxy_identity_type` int DEFAULT NULL COMMENT '代理身份类型 1：透明 2：高度匿名 3：普通匿名',
+    `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+    `modify_time` datetime DEFAULT NULL COMMENT '修改时间',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `UNIQUE_IP` (`IP`),
+    KEY `idx_countryDomainStatus` (`country_domain`,`status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
