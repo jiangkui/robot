@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * 代理服务ip地址 service
@@ -64,7 +65,7 @@ public class ProxyServiceIpAddressService {
             String countryDomain = proxy.getCountryDomain();
             Map<Long, ProxyServerIpAddress> proxyIdMap = cacheProxy.get(countryDomain);
             if (proxyIdMap == null) {
-                proxyIdMap = new HashedMap();
+                proxyIdMap = new TreeMap<>();
                 proxyIdMap.put(proxy.getId(), proxy);
                 cacheProxy.put(countryDomain, proxyIdMap);
             } else {
@@ -85,9 +86,9 @@ public class ProxyServiceIpAddressService {
         if (proxyServerIpAddress == null) {
             if (cacheProxy.size() == 0) {
                 refreshCache();
-                ProxyServerIpAddress ipAddress = changeProxy(proxyStrList);
-                return ipAddress;
             }
+            ProxyServerIpAddress ipAddress = changeProxy(proxyStrList);
+            return ipAddress;
         }
         return proxyServerIpAddress;
     }
@@ -127,28 +128,47 @@ public class ProxyServiceIpAddressService {
 
             //返回该国家域名队列代理中的下一个代理
             if (MapUtils.isNotEmpty(proxyIdMap)) {
-                ProxyServerIpAddress newProxy = proxyIdMap.get(proxyServerIpAddress.getId() + 1);
-                if (newProxy != null) {
-                    return newProxy;
-                }
-            } else {
-                //从下一个国家域名队列中获取代理
-                int index = proxyStrList.indexOf(proxyServerIpAddress.getCountryDomain());
+                ProxyServerIpAddress ipAddress = obtainNextProxyByMapAndId(proxyIdMap, proxyServerIpAddress.getId());
 
-                for (int i = index + 1; i < proxyStrList.size(); i++) {
-                    String proxyDomain = proxyStrList.get(i);
-                    Map<Long, ProxyServerIpAddress> proxyIdMap2 = cacheProxy.get(proxyDomain);
-                    if (MapUtils.isNotEmpty(proxyIdMap2)) {
-                        for (Map.Entry<Long, ProxyServerIpAddress> entry : proxyIdMap2.entrySet()) {
-                            if (entry.getValue() != null) {
-                                return entry.getValue();
-                            }
+                if (ipAddress != null) {
+                    return ipAddress;
+                }
+            }
+
+            //从下一个国家域名队列中获取代理
+            int index = proxyStrList.indexOf(proxyServerIpAddress.getCountryDomain());
+
+            for (int i = index + 1; i < proxyStrList.size(); i++) {
+                String proxyDomain = proxyStrList.get(i);
+                Map<Long, ProxyServerIpAddress> proxyIdMap2 = cacheProxy.get(proxyDomain);
+                if (MapUtils.isNotEmpty(proxyIdMap2)) {
+                    for (Map.Entry<Long, ProxyServerIpAddress> entry : proxyIdMap2.entrySet()) {
+                        if (entry.getValue() != null) {
+                            return entry.getValue();
                         }
                     }
                 }
+            }
 
-                //threadLocal 中没有，择取第一个
-                return obtainProxyByFirst(proxyStrList);
+            //threadLocal 中没有，择取第一个
+            return obtainProxyByFirst(proxyStrList);
+        }
+    }
+
+    private ProxyServerIpAddress obtainNextProxyByMapAndId(Map<Long, ProxyServerIpAddress> proxyIdMap, Long id) {
+        for (Map.Entry<Long, ProxyServerIpAddress> entry : proxyIdMap.entrySet()) {
+            if (entry.getKey() <= id) {
+                continue;
+            }
+
+            if (entry.getValue() != null) {
+                return entry.getValue();
+            }
+        }
+
+        for (Map.Entry<Long, ProxyServerIpAddress> entry : proxyIdMap.entrySet()) {
+            if (entry.getValue() != null) {
+                return entry.getValue();
             }
         }
 

@@ -48,7 +48,7 @@ public class HttpClientUtil {
      * @throws HttpStatusException 状态不为200 的时候会抛出异常
      * @throws HttpException       其他错误
      */
-    public static String executeUrl(String url) throws HttpStatusException, HttpException {
+    public static String executeUrl(String url) throws HttpStatusException, HttpException, IOException {
         String entityString = "";
 
         HttpPost httpPost = new HttpPost(url);
@@ -61,39 +61,39 @@ public class HttpClientUtil {
         return entityString;
     }
 
-    private static String execute(HttpPost httpPost) throws HttpException, HttpStatusException {
+    private static String execute(HttpPost httpPost) throws HttpException, HttpStatusException, IOException {
         String url = httpPost.getURI().toString();
         String result = "";
-        try {
-            CloseableHttpResponse response = httpClient.execute(httpPost);
-            StatusLine statusLine = response.getStatusLine();
-            Header[] allHeaders = response.getAllHeaders();
+        CloseableHttpResponse response = httpClient.execute(httpPost);
+        StatusLine statusLine = response.getStatusLine();
+        Header[] allHeaders = response.getAllHeaders();
 
-            if (statusLine.getStatusCode() == 200) {
-                log.debug(statusLine + Arrays.toString(allHeaders));
+        if (statusLine.getStatusCode() == 200) {
+            log.debug(statusLine + Arrays.toString(allHeaders));
 
-                HttpEntity entity = response.getEntity();
-                if (entity != null) {
-                    result = EntityUtils.toString(entity);
-                }
-
-            } else {
-                log.error("【状态：" + statusLine + "】【响应头：" + Arrays.toString(allHeaders) + "】");
-                throw new HttpStatusException(statusLine, allHeaders);
+            HttpEntity entity = response.getEntity();
+            if (entity != null) {
+                result = EntityUtils.toString(entity);
             }
-        } catch (IOException e) {
-            log.error("网络请求模块，出错！【" + url + "】");
+
+        } else {
+            log.error("【状态：" + statusLine + "】【响应头：" + Arrays.toString(allHeaders) + "】");
+            throw new HttpStatusException(statusLine, allHeaders);
+        }
+//        try {
+//        } catch (IOException e) {
+//            log.error("网络请求模块，出错！【" + url + "】");
 //            e.printStackTrace();
-            throw new HttpException(url, e);
-        } finally {
-            // 释放资源
+//            throw new IOException(url, e);
+//        } finally {
+//             释放资源
 //            try {
 //                httpClient.close();
 //            } catch (IOException e) {
 //                e.printStackTrace();
 //                log.error("释放资源出错！【" + url + "】");
 //            }
-        }
+//        }
 
         return result;
     }
@@ -108,7 +108,7 @@ public class HttpClientUtil {
      * @throws HttpException
      * @throws java.io.UnsupportedEncodingException
      */
-    public static String executeByParams(String url, List<NameValuePair> params) throws HttpStatusException, HttpException, UnsupportedEncodingException {
+    public static String executeByParams(String url, List<NameValuePair> params) throws HttpStatusException, HttpException, IOException {
         String entityString = "";
 
         HttpPost httpPost = new HttpPost(url);
@@ -128,7 +128,7 @@ public class HttpClientUtil {
      * @param requestUrl 请求地址
      * @param proxyAddress 代理
      */
-    public static String executeByProxy(String requestUrl, ProxyServerIpAddress proxyAddress) throws HttpException, HttpStatusException {
+    public static String executeByProxy(String requestUrl, ProxyServerIpAddress proxyAddress) throws HttpException, HttpStatusException, IOException {
         //通过 ThreadLocal 获得代理，如果已经存在，则返回当前代理。
 
         HttpPost httpPost = new HttpPost(requestUrl);

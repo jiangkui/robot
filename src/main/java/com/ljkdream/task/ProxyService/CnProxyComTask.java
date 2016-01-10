@@ -17,9 +17,11 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 
 /**
  * 抓取 http://cn-proxy.com/ 中,国内代理服务器数据任务
@@ -49,7 +51,7 @@ public class CnProxyComTask extends AbstractBaseTask {
 
     @Override
     public void execute() {
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 5; i++) {
             try {
                 ProxyServerIpAddress proxyServerIpAddress = proxyService.obtainProxy(proxyStrList);
 
@@ -63,7 +65,7 @@ public class CnProxyComTask extends AbstractBaseTask {
                 proxyService.saveOrUpdate(proxyList);
                 proxyService.clearProxy();
                 break;
-            } catch (HttpException | HttpStatusException e) {
+            } catch (Exception e) {
                 logger.error("http 请求失败！ 切换代理重试：第" + i + "次");
                 proxyService.changeProxy(proxyStrList);
                 e.printStackTrace();
