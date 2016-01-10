@@ -1,6 +1,7 @@
 package com.ljkdream.task.yiyuanduobao;
 
 import com.ljkdream.model.RelationGoodsPeriod;
+import com.ljkdream.service.ProxyServiceIpAddressService;
 import com.ljkdream.service.YiYuanDuoBaoService;
 import com.ljkdream.task.base.AbstractBaseTask;
 import com.ljkdream.task.base.TaskExecutorFactory;
@@ -19,9 +20,11 @@ public class AllPeriodWinnerTask extends AbstractBaseTask {
     private static Logger logger = LoggerFactory.getLogger(AllPeriodWinnerTask.class);
 
     private YiYuanDuoBaoService yiYuanDuoBaoService;
+    private ProxyServiceIpAddressService proxyServiceIpAddressService;
 
-    public AllPeriodWinnerTask(YiYuanDuoBaoService yiYuanDuoBaoService) {
+    public AllPeriodWinnerTask(YiYuanDuoBaoService yiYuanDuoBaoService, ProxyServiceIpAddressService proxyServiceIpAddressService) {
         this.yiYuanDuoBaoService = yiYuanDuoBaoService;
+        this.proxyServiceIpAddressService = proxyServiceIpAddressService;
     }
 
     @Override
@@ -31,7 +34,7 @@ public class AllPeriodWinnerTask extends AbstractBaseTask {
         for (RelationGoodsPeriod relationGoodsPeriod : list) {
 
             PeriodWinnerTask periodWinnerTask = new PeriodWinnerTask(relationGoodsPeriod.getPeriod(),
-                    relationGoodsPeriod.getGid(), yiYuanDuoBaoService);
+                    relationGoodsPeriod.getGid(), yiYuanDuoBaoService, proxyServiceIpAddressService);
 
             try {
                 logger.info("【提交抓取任务】" + periodWinnerTask);

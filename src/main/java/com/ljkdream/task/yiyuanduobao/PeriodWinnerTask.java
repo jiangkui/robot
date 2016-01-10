@@ -54,16 +54,21 @@ public class PeriodWinnerTask extends AbstractBaseTask {
         proxyStrList.add("CN");
     }
 
-    public PeriodWinnerTask(Long period, Long gid, YiYuanDuoBaoService yiYuanDuoBaoService) {
-        this(period, gid, yiYuanDuoBaoService, Integer.MAX_VALUE);
+    public PeriodWinnerTask(Long period, Long gid, YiYuanDuoBaoService yiYuanDuoBaoService,
+                            ProxyServiceIpAddressService proxyServiceIpAddressService) {
+        this(period, gid, yiYuanDuoBaoService, proxyServiceIpAddressService, Integer.MAX_VALUE);
     }
 
-    public PeriodWinnerTask(Long period, Long gid, YiYuanDuoBaoService yiYuanDuoBaoService, Integer executeNum) {
+    public PeriodWinnerTask(Long period, Long gid, YiYuanDuoBaoService yiYuanDuoBaoService,
+            ProxyServiceIpAddressService proxyServiceIpAddressService, Integer executeNum) {
         this.period = period;
         this.gid = gid;
         this.executeNum = executeNum;
         this.yiYuanDuoBaoService = yiYuanDuoBaoService;
+        this.proxyServiceIpAddressService = proxyServiceIpAddressService;
     }
+
+
 
     @Override
     public void execute() {
@@ -114,6 +119,7 @@ public class PeriodWinnerTask extends AbstractBaseTask {
                 setNextRequestDate(gidAndPeriodId);
             } catch (Exception e) {
                 logger.error("报错了" + e.getMessage());
+                e.printStackTrace();
             }
         }
 
