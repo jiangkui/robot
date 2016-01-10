@@ -139,4 +139,13 @@ public class ProxyServerIpAddress {
     public void setModifyTime(Date modifyTime) {
         this.modifyTime = modifyTime;
     }
+
+    @Override
+    public String toString() {
+        return "ProxyServerIpAddress{" +
+                "ip='" + ip + '\'' +
+                ", countryDomain='" + countryDomain + '\'' +
+                ", port=" + port +
+                '}';
+    }
 }

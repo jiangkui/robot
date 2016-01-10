@@ -3,6 +3,7 @@ package com.ljkdream.util;
 import com.ljkdream.exception.HttpException;
 import com.ljkdream.exception.HttpStatusException;
 import com.ljkdream.model.CountryDomain;
+import com.ljkdream.model.ProxyServerIpAddress;
 import org.apache.http.*;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -12,6 +13,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
+import org.apache.log4j.helpers.ThreadLocalMap;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -26,6 +28,8 @@ import java.util.List;
 public class HttpClientUtil {
 
     private static Logger log = Logger.getLogger(HttpClientUtil.class);
+
+    private static ThreadLocal<CountryDomain> countryDomainThreadLocal = new ThreadLocal<>();
 
     private static RequestConfig baseRequestConfig = RequestConfig.custom()
             .setSocketTimeout(5000)
@@ -78,8 +82,8 @@ public class HttpClientUtil {
                 throw new HttpStatusException(statusLine, allHeaders);
             }
         } catch (IOException e) {
-            e.printStackTrace();
             log.error("网络请求模块，出错！【" + url + "】");
+//            e.printStackTrace();
             throw new HttpException(url, e);
         } finally {
             // 释放资源
@@ -122,15 +126,21 @@ public class HttpClientUtil {
      * 执行请求
      *
      * @param requestUrl 请求地址
-     * @param proxyList 代理简称
+     * @param proxyAddress 代理
      */
-    public static String execute(String requestUrl, List<CountryDomain> proxyList) throws HttpException, HttpStatusException {
+    public static String executeByProxy(String requestUrl, ProxyServerIpAddress proxyAddress) throws HttpException, HttpStatusException {
         //通过 ThreadLocal 获得代理，如果已经存在，则返回当前代理。
 
-        HttpHost proxy = new HttpHost("124.244.76.175", 80, "http");
-        RequestConfig requestConfig = RequestConfig.copy(baseRequestConfig).setProxy(proxy).build();
         HttpPost httpPost = new HttpPost(requestUrl);
-        httpPost.setConfig(requestConfig);
+
+        if (proxyAddress != null) {
+            HttpHost proxy = new HttpHost(proxyAddress.getIp(), proxyAddress.getPort(), "http");
+            log.info("使用代理：" + proxyAddress + " 请求：" + requestUrl);
+            RequestConfig requestConfig = RequestConfig.copy(baseRequestConfig).setProxy(proxy).build();
+            httpPost.setConfig(requestConfig);
+        } else {
+            log.warn("没有找到代理！");
+        }
 
         String result = execute(httpPost);
         return result;

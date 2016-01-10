@@ -4,6 +4,7 @@ import com.ljkdream.exception.HttpException;
 import com.ljkdream.exception.HttpStatusException;
 import com.ljkdream.model.CountryDomain;
 import com.ljkdream.model.ProxyServerIpAddress;
+import com.ljkdream.service.CountryDomainService;
 import com.ljkdream.service.ProxyServiceIpAddressService;
 import com.ljkdream.task.base.AbstractBaseTask;
 import com.ljkdream.util.HttpClientUtil;
@@ -29,19 +30,16 @@ public class CnProxyComTask extends AbstractBaseTask {
 
     public static final String REQUEST_CN_URL = "http://cn-proxy.com/"; //国内代理
     public static final String REQUEST_INTERNATIONAL_URL = "http://cn-proxy.com/archives/218"; //国际代理
-    public static final List<CountryDomain> proxyCountryDomainList = new ArrayList<>();
+    public static final List<String> proxyStrList = new ArrayList<>();
     private Logger logger = LoggerFactory.getLogger(CnProxyComTask.class);
 
     private String requestUrl = "";
     private ProxyServiceIpAddressService proxyService;
 
     static {
-        CountryDomain hk = new CountryDomain("HK");
-        CountryDomain us = new CountryDomain("US");
-        CountryDomain tw = new CountryDomain("TW");
-        proxyCountryDomainList.add(hk);
-        proxyCountryDomainList.add(us);
-        proxyCountryDomainList.add(tw);
+        proxyStrList.add("HK");
+        proxyStrList.add("US");
+        proxyStrList.add("TW");
     }
 
     public CnProxyComTask(String requestUrl, ProxyServiceIpAddressService proxyService) {
@@ -51,18 +49,25 @@ public class CnProxyComTask extends AbstractBaseTask {
 
     @Override
     public void execute() {
-        try {
-            String result = HttpClientUtil.execute(requestUrl, proxyCountryDomainList);
+        for (int i = 0; i < 3; i++) {
+            try {
+                ProxyServerIpAddress proxyServerIpAddress = proxyService.obtainProxy(proxyStrList);
 
-            List<ProxyServerIpAddress> proxyList = resolve(result);
+                String result = HttpClientUtil.executeByProxy(requestUrl, proxyServerIpAddress);
 
-            if (proxyList.size() > 0) {
-                logger.info("成功抓取："+proxyList.size() + "条数据");
+                List<ProxyServerIpAddress> proxyList = resolve(result);
+
+                if (proxyList.size() > 0) {
+                    logger.info("成功抓取："+proxyList.size() + "条数据");
+                }
+                proxyService.saveOrUpdate(proxyList);
+                proxyService.clearProxy();
+                break;
+            } catch (HttpException | HttpStatusException e) {
+                logger.error("http 请求失败！ 切换代理重试：第" + i + "次");
+                proxyService.changeProxy(proxyStrList);
+                e.printStackTrace();
             }
-            proxyService.saveOrUpdate(proxyList);
-        } catch (HttpException | HttpStatusException e) {
-            logger.error("http 请求失败！");
-            e.printStackTrace();
         }
     }
 

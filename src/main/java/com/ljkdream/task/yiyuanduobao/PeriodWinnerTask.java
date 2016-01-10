@@ -2,7 +2,9 @@ package com.ljkdream.task.yiyuanduobao;
 
 import com.ljkdream.model.Goods;
 import com.ljkdream.model.PeriodWinner;
+import com.ljkdream.model.ProxyServerIpAddress;
 import com.ljkdream.model.User;
+import com.ljkdream.service.ProxyServiceIpAddressService;
 import com.ljkdream.service.YiYuanDuoBaoService;
 import com.ljkdream.task.base.AbstractBaseTask;
 import com.ljkdream.util.HttpClientUtil;
@@ -13,7 +15,9 @@ import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -38,11 +42,17 @@ public class PeriodWinnerTask extends AbstractBaseTask {
     private Long period;
     private Long gid;
     private YiYuanDuoBaoService yiYuanDuoBaoService;
+    private ProxyServiceIpAddressService proxyServiceIpAddressService;
     private Integer executeNum; //该任务执行次数
 
     private static Random random = new Random();
     private int retryNum = 0; //更换代理重试请求的次数
     public static final int DEFAULT_RETRY_NUM = 2; //超过重试次数就放弃
+    private static List<String> proxyStrList = new ArrayList<>();
+
+    static {
+        proxyStrList.add("CN");
+    }
 
     public PeriodWinnerTask(Long period, Long gid, YiYuanDuoBaoService yiYuanDuoBaoService) {
         this(period, gid, yiYuanDuoBaoService, Integer.MAX_VALUE);
@@ -63,7 +73,8 @@ public class PeriodWinnerTask extends AbstractBaseTask {
                 sleep();
 
                 String url = obtainUrl();
-                String resultStr = HttpClientUtil.executeUrl(url);
+                ProxyServerIpAddress proxy = proxyServiceIpAddressService.obtainProxy(proxyStrList);
+                String resultStr = HttpClientUtil.executeByProxy(url, proxy);
                 JSONObject jsonObject = JSONObject.fromObject(resultStr);
 
                 Object code = jsonObject.get("code");
@@ -105,6 +116,8 @@ public class PeriodWinnerTask extends AbstractBaseTask {
                 logger.error("报错了" + e.getMessage());
             }
         }
+
+        proxyServiceIpAddressService.clearProxy();
     }
 
     /**
@@ -172,6 +185,8 @@ public class PeriodWinnerTask extends AbstractBaseTask {
             logger.error("抓取完毕！ ");
             return false;
         }
+
+        proxyServiceIpAddressService.changeProxy(proxyStrList);
         return true;
     }
 

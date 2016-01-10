@@ -17,7 +17,7 @@ public class CnProxyComSchedule {
     @Autowired
     private ProxyServiceIpAddressService proxyServiceIpAddressService;
 
-    @Scheduled(cron = "0 */10 * * * ?")
+    @Scheduled(cron = "*/10 * * * * ?")
     public void execute() {
         CnProxyComTask cn = new CnProxyComTask(CnProxyComTask.REQUEST_CN_URL, proxyServiceIpAddressService);
         CnProxyComTask other = new CnProxyComTask(CnProxyComTask.REQUEST_INTERNATIONAL_URL, proxyServiceIpAddressService);
