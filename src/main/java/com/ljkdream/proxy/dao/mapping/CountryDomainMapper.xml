@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ljkdream.proxy.dao.CountryDomainMapper" >
+  <resultMap id="BaseResultMap" type="com.ljkdream.proxy.model.CountryDomain" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="country_domain" property="countryDomain" jdbcType="VARCHAR" />
+    <result column="country_region_zh" property="countryRegionZh" jdbcType="VARCHAR" />
+    <result column="country_region_en" property="countryRegionEn" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, country_domain, country_region_zh, country_region_en
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.ljkdream.proxy.model.CountryDomainExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from country_domain
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from country_domain
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from country_domain
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.ljkdream.proxy.model.CountryDomainExample" >
+    delete from country_domain
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.ljkdream.proxy.model.CountryDomain" >
+    insert into country_domain (id, country_domain, country_region_zh, 
+      country_region_en)
+    values (#{id,jdbcType=BIGINT}, #{countryDomain,jdbcType=VARCHAR}, #{countryRegionZh,jdbcType=VARCHAR}, 
+      #{countryRegionEn,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ljkdream.proxy.model.CountryDomain" >
+    insert into country_domain
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="countryDomain != null" >
+        country_domain,
+      </if>
+      <if test="countryRegionZh != null" >
+        country_region_zh,
+      </if>
+      <if test="countryRegionEn != null" >
+        country_region_en,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="countryDomain != null" >
+        #{countryDomain,jdbcType=VARCHAR},
+      </if>
+      <if test="countryRegionZh != null" >
+        #{countryRegionZh,jdbcType=VARCHAR},
+      </if>
+      <if test="countryRegionEn != null" >
+        #{countryRegionEn,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.ljkdream.proxy.model.CountryDomainExample" resultType="java.lang.Integer" >
+    select count(*) from country_domain
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update country_domain
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.countryDomain != null" >
+        country_domain = #{record.countryDomain,jdbcType=VARCHAR},
+      </if>
+      <if test="record.countryRegionZh != null" >
+        country_region_zh = #{record.countryRegionZh,jdbcType=VARCHAR},
+      </if>
+      <if test="record.countryRegionEn != null" >
+        country_region_en = #{record.countryRegionEn,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update country_domain
+    set id = #{record.id,jdbcType=BIGINT},
+      country_domain = #{record.countryDomain,jdbcType=VARCHAR},
+      country_region_zh = #{record.countryRegionZh,jdbcType=VARCHAR},
+      country_region_en = #{record.countryRegionEn,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ljkdream.proxy.model.CountryDomain" >
+    update country_domain
+    <set >
+      <if test="countryDomain != null" >
+        country_domain = #{countryDomain,jdbcType=VARCHAR},
+      </if>
+      <if test="countryRegionZh != null" >
+        country_region_zh = #{countryRegionZh,jdbcType=VARCHAR},
+      </if>
+      <if test="countryRegionEn != null" >
+        country_region_en = #{countryRegionEn,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ljkdream.proxy.model.CountryDomain" >
+    update country_domain
+    set country_domain = #{countryDomain,jdbcType=VARCHAR},
+      country_region_zh = #{countryRegionZh,jdbcType=VARCHAR},
+      country_region_en = #{countryRegionEn,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

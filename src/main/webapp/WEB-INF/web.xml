@@ -18,7 +18,7 @@
 
     <!-- 开启任务服务 -->
     <listener>
-        <listener-class>com.ljkdream.listener.TaskListener</listener-class>
+        <listener-class>com.ljkdream.core.listener.TaskListener</listener-class>
     </listener>
 
     <servlet>
@@ -49,7 +49,7 @@
     <!-- json跨域：CORS 解决方案 -->
     <filter>
         <filter-name>cors</filter-name>
-        <filter-class>com.ljkdream.filter.SimpleCORSFilter</filter-class>
+        <filter-class>com.ljkdream.core.filter.SimpleCORSFilter</filter-class>
     </filter>
 
     <filter-mapping>

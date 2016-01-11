@@ -17,7 +17,8 @@
 	    <property name="dataSource" ref="dataSource"/>
 	    <property name="mapperLocations">
 	    	<list>
-				<value>classpath:com/ljkdream/dao/mapping/*.xml</value>
+				<value>classpath:com/ljkdream/proxy/dao/mapping/*.xml</value>
+				<value>classpath:com/ljkdream/yiyuanduobao/dao/mapping/*.xml</value>
 	    	</list>
 	    </property>
 	</bean>
@@ -25,16 +26,16 @@
 	<!-- 包自动扫描注入方式 -->
 	<bean id="authMybatis" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
         <property name="annotationClass" value="org.springframework.stereotype.Repository"/>
-        <property name="basePackage" value="com.ljkdream.dao"/>
-        <!-- 使用该属性会导致sqlSessionFactory引用的context:property-placeholder无法优先替换
-        <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
-         -->
-        <property name="sqlSessionFactoryBeanName" value="authSqlSessionFactory" />
+        <property name="basePackage" value="com.ljkdream.*.dao"/>
+		<!-- 使用该属性会导致sqlSessionFactory引用的context:property-placeholder无法优先替换
+                <property name="sqlSessionFactory" ref="sqlSessionFactory"/>
+                 -->
+		<property name="sqlSessionFactoryBeanName" value="authSqlSessionFactory" />
     </bean>
 
     <!-- 事务管理器 -->
-    <!--<bean id="authTransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">-->
-        <!--<property name="dataSource" ref="dataSource"/>-->
-    <!--</bean>-->
+    <bean id="authTransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
 
 </beans>
