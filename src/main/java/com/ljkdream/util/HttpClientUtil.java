@@ -139,7 +139,7 @@ public class HttpClientUtil {
             RequestConfig requestConfig = RequestConfig.copy(baseRequestConfig).setProxy(proxy).build();
             httpPost.setConfig(requestConfig);
         } else {
-            log.warn("没有找到代理！");
+//            log.warn("没有找到代理！");
         }
 
         String result = execute(httpPost);

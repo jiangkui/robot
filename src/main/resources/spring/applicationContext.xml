@@ -18,10 +18,10 @@
         <property name="url" value="${dataSource.url}"/>
         <property name="username" value="${dataSource.userName}"/>
         <property name="password" value="${dataSource.password}"/>
-        <!--<property name="initialSize" value="${initialSize}"/>-->
-        <!--<property name="maxActive" value="${maxActive}"/>-->
-        <!--<property name="maxIdle" value="${maxIdle}"/>-->
-        <!--<property name="minIdle" value="${minIdle}"/>-->
+        <property name="initialSize" value="${initialSize}"/>
+        <property name="maxActive" value="${maxActive}"/>
+        <property name="maxIdle" value="${maxIdle}"/>
+        <property name="minIdle" value="${minIdle}"/>
     </bean>
 
     <import resource="application-data.xml"/>

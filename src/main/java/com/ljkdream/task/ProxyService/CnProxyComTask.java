@@ -63,7 +63,6 @@ public class CnProxyComTask extends AbstractBaseTask {
                     logger.info("成功抓取："+proxyList.size() + "条数据");
                 }
                 proxyService.saveOrUpdate(proxyList);
-                proxyService.clearProxy();
                 break;
             } catch (Exception e) {
                 logger.error("http 请求失败！ 切换代理重试：第" + i + "次");
@@ -71,6 +70,7 @@ public class CnProxyComTask extends AbstractBaseTask {
                 e.printStackTrace();
             }
         }
+        proxyService.clearProxy();
     }
 
     private List<ProxyServerIpAddress> resolve(String result) {

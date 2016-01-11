@@ -20,7 +20,7 @@ public class CnProxyComSchedule {
     /**
      * 每小时请求一次
      */
-    @Scheduled(cron = "0 0 * * * ?")
+//    @Scheduled(cron = "0 */30 * * * ?")
     public void execute() {
         CnProxyComTask cn = new CnProxyComTask(CnProxyComTask.REQUEST_CN_URL, proxyServiceIpAddressService);
         CnProxyComTask other = new CnProxyComTask(CnProxyComTask.REQUEST_INTERNATIONAL_URL, proxyServiceIpAddressService);
