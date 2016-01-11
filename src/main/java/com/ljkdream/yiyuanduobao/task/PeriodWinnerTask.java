@@ -1,13 +1,14 @@
 package com.ljkdream.yiyuanduobao.task;
 
-import com.ljkdream.yiyuanduobao.model.Goods;
-import com.ljkdream.yiyuanduobao.model.PeriodWinner;
-import com.ljkdream.proxy.model.ProxyServerIpAddress;
-import com.ljkdream.yiyuanduobao.model.User;
-import com.ljkdream.proxy.service.ProxyServiceIpAddressService;
-import com.ljkdream.yiyuanduobao.service.YiYuanDuoBaoService;
 import com.ljkdream.core.task.AbstractBaseTask;
 import com.ljkdream.core.util.HttpClientUtil;
+import com.ljkdream.proxy.model.ProxyServerIpAddress;
+import com.ljkdream.proxy.service.ProxyServiceIpAddressService;
+import com.ljkdream.yiyuanduobao.entity.GidAndPeriodId;
+import com.ljkdream.yiyuanduobao.model.Goods;
+import com.ljkdream.yiyuanduobao.model.PeriodWinner;
+import com.ljkdream.yiyuanduobao.model.User;
+import com.ljkdream.yiyuanduobao.service.YiYuanDuoBaoService;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.slf4j.Logger;
@@ -47,7 +48,7 @@ public class PeriodWinnerTask extends AbstractBaseTask {
 
     private static Random random = new Random();
     private volatile int retryNum = 0; //更换代理重试请求的次数
-    public static final int DEFAULT_RETRY_NUM = 5; //超过重试次数就放弃
+    public static final int DEFAULT_RETRY_NUM = 3; //超过重试次数就放弃
     private static List<String> proxyStrList = new ArrayList<>();
 
     static {
@@ -84,7 +85,12 @@ public class PeriodWinnerTask extends AbstractBaseTask {
 
                 //目标服务器返回结果异常
                 if (code == null || ((Integer) code) != 0) {
-                    logger.error("code 不等于 0");
+                    logger.warn("code = " + code);
+                    if (((Integer) code) == 16) {
+                        logger.info("抓取完毕！");
+                        return;
+                    }
+
                     if (changeProxyRetry()) { //更换http 代理，重试
                         continue;
                     } else {
@@ -104,13 +110,13 @@ public class PeriodWinnerTask extends AbstractBaseTask {
                 GidAndPeriodId gidAndPeriodId = analysisJson(jsonObject);
 
                 //如果该 period 已经抓去过，则获取该商品最早的期数，尝试继续抓取
-                PeriodWinner periodWinner = yiYuanDuoBaoService.queryPeriodWinnerByPeriod(gidAndPeriodId.getPeriod());
-                if (periodWinner != null) {
-                    logger.info("改期已经抓取完毕！ gid:" + gid +" period：" + period);
-                    PeriodWinner oldDate = yiYuanDuoBaoService.queryOldPeriodWinnerByGid(gid);
-                    period = oldDate.getPeriod();
-                    continue;
-                }
+//                PeriodWinner periodWinner = yiYuanDuoBaoService.queryPeriodWinnerByPeriod(gidAndPeriodId.getPeriod());
+//                if (periodWinner != null) {
+//                    logger.info("改期已经抓取完毕！ gid:" + gid +" period：" + period);
+//                    PeriodWinner oldDate = yiYuanDuoBaoService.queryOldPeriodWinnerByGid(gid);
+//                    period = oldDate.getPeriod();
+//                    continue;
+//                }
 
                 //存储数据
                 saveDate(jsonObject);
@@ -187,7 +193,7 @@ public class PeriodWinnerTask extends AbstractBaseTask {
     private boolean changeProxyRetry() {
         //被屏蔽了，切换代理
         retryNum++;
-        logger.error("更换代理重试：" + retryNum);
+        logger.warn("更换代理重试：" + retryNum);
         if (retryNum >= DEFAULT_RETRY_NUM) {
             logger.error("重试次数超过" + retryNum + "，放弃该任务！");
             return false;
@@ -323,35 +329,6 @@ public class PeriodWinnerTask extends AbstractBaseTask {
     }
 
     public void setPeriod(Long period) {
-        this.period = period;
-    }
-}
-
-/**
- * gid 和 periodId 的一个包装对象。用来传递 这俩id数据
- */
-class GidAndPeriodId {
-    private long gid;
-    private long period;
-
-    public GidAndPeriodId(long gid, long period) {
-        this.gid = gid;
-        this.period = period;
-    }
-
-    public long getGid() {
-        return gid;
-    }
-
-    public void setGid(long gid) {
-        this.gid = gid;
-    }
-
-    public long getPeriod() {
-        return period;
-    }
-
-    public void setPeriod(long period) {
         this.period = period;
     }
 }
