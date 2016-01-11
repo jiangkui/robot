@@ -43,10 +43,8 @@ public class HttpClientUtil {
      *
      * @param url url
      * @return 实体内容的字符串
-     * @throws HttpStatusException 状态不为200 的时候会抛出异常
-     * @throws HttpException       其他错误
      */
-    public static String executeUrl(String url) throws HttpStatusException, HttpException, IOException {
+    public static String executeUrl(String url) throws IOException {
         String entityString = "";
 
         HttpPost httpPost = new HttpPost(url);
@@ -59,40 +57,31 @@ public class HttpClientUtil {
         return entityString;
     }
 
-    private static String execute(HttpPost httpPost) throws HttpException, HttpStatusException, IOException {
+    private static String execute(HttpPost httpPost) throws IOException {
         String url = httpPost.getURI().toString();
         String result = "";
         CloseableHttpResponse response = httpClient.execute(httpPost);
         StatusLine statusLine = response.getStatusLine();
-        Header[] allHeaders = response.getAllHeaders();
 
         if (statusLine.getStatusCode() == 200) {
-            log.debug(statusLine + Arrays.toString(allHeaders));
-
             HttpEntity entity = response.getEntity();
             if (entity != null) {
                 result = EntityUtils.toString(entity);
             }
-
         } else {
-            log.error("【状态：" + statusLine + "】【响应头：" + Arrays.toString(allHeaders) + "】");
-            throw new HttpStatusException(statusLine, allHeaders);
-        }
-//        try {
-//        } catch (IOException e) {
-//            log.error("网络请求模块，出错！【" + url + "】");
-//            e.printStackTrace();
-//            throw new IOException(url, e);
-//        } finally {
-//             释放资源
-//            try {
-//                httpClient.close();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//                log.error("释放资源出错！【" + url + "】");
-//            }
-//        }
+            Header[] allHeaders = response.getAllHeaders();
+            HttpEntity entity = response.getEntity();
 
+            StringBuilder sb = new StringBuilder();
+            sb.append("【status = ").append(statusLine.getStatusCode()).append("】").append("【").append(Arrays.toString(allHeaders)).append("】");
+            if (entity == null) {
+                sb.append("【").append("entity is null").append("】");
+            } else {
+                sb.append("【").append(EntityUtils.toString(entity)).append("】");
+            }
+
+            log.error(sb.toString());
+        }
         return result;
     }
 
@@ -102,11 +91,8 @@ public class HttpClientUtil {
      * @param url    请求地址
      * @param params 参数列表
      * @return entity
-     * @throws HttpStatusException
-     * @throws HttpException
-     * @throws java.io.UnsupportedEncodingException
      */
-    public static String executeByParams(String url, List<NameValuePair> params) throws HttpStatusException, HttpException, IOException {
+    public static String executeByParams(String url, List<NameValuePair> params) throws IOException {
         String entityString = "";
 
         HttpPost httpPost = new HttpPost(url);
@@ -123,12 +109,10 @@ public class HttpClientUtil {
     /**
      * 执行请求
      *
-     * @param requestUrl 请求地址
+     * @param requestUrl   请求地址
      * @param proxyAddress 代理
      */
-    public static String executeByProxy(String requestUrl, ProxyServerIpAddress proxyAddress) throws HttpException, HttpStatusException, IOException {
-        //通过 ThreadLocal 获得代理，如果已经存在，则返回当前代理。
-
+    public static String executeByProxy(String requestUrl, ProxyServerIpAddress proxyAddress) throws IOException {
         HttpPost httpPost = new HttpPost(requestUrl);
 
         if (proxyAddress != null) {

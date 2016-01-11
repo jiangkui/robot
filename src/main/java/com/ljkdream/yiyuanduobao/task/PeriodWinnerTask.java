@@ -46,8 +46,8 @@ public class PeriodWinnerTask extends AbstractBaseTask {
     private Integer executeNum; //该任务执行次数
 
     private static Random random = new Random();
-    private int retryNum = 0; //更换代理重试请求的次数
-    public static final int DEFAULT_RETRY_NUM = 2; //超过重试次数就放弃
+    private volatile int retryNum = 0; //更换代理重试请求的次数
+    public static final int DEFAULT_RETRY_NUM = 5; //超过重试次数就放弃
     private static List<String> proxyStrList = new ArrayList<>();
 
     static {
@@ -60,15 +60,13 @@ public class PeriodWinnerTask extends AbstractBaseTask {
     }
 
     public PeriodWinnerTask(Long period, Long gid, YiYuanDuoBaoService yiYuanDuoBaoService,
-            ProxyServiceIpAddressService proxyServiceIpAddressService, Integer executeNum) {
+                            ProxyServiceIpAddressService proxyServiceIpAddressService, Integer executeNum) {
         this.period = period;
         this.gid = gid;
         this.executeNum = executeNum;
         this.yiYuanDuoBaoService = yiYuanDuoBaoService;
         this.proxyServiceIpAddressService = proxyServiceIpAddressService;
     }
-
-
 
     @Override
     public void execute() {
@@ -86,9 +84,11 @@ public class PeriodWinnerTask extends AbstractBaseTask {
 
                 //目标服务器返回结果异常
                 if (code == null || ((Integer) code) != 0) {
+                    logger.error("code 不等于 0");
                     if (changeProxyRetry()) { //更换http 代理，重试
                         continue;
                     } else {
+                        logger.error("任务停止于： gid:" +gid + " period:" + period);
                         return;
                     }
                 } else {
@@ -106,7 +106,7 @@ public class PeriodWinnerTask extends AbstractBaseTask {
                 //如果该 period 已经抓去过，则获取该商品最早的期数，尝试继续抓取
                 PeriodWinner periodWinner = yiYuanDuoBaoService.queryPeriodWinnerByPeriod(gidAndPeriodId.getPeriod());
                 if (periodWinner != null) {
-                    logger.info("改期已经抓取完毕！ 期号：" + period);
+                    logger.info("改期已经抓取完毕！ gid:" + gid +" period：" + period);
                     PeriodWinner oldDate = yiYuanDuoBaoService.queryOldPeriodWinnerByGid(gid);
                     period = oldDate.getPeriod();
                     continue;
@@ -118,7 +118,7 @@ public class PeriodWinnerTask extends AbstractBaseTask {
                 //设置下一次请求的数据
                 setNextRequestDate(gidAndPeriodId);
             } catch (Exception e) {
-                logger.error("报错了" + e.getMessage());
+                changeProxyRetry();
                 e.printStackTrace();
             }
         }
@@ -128,6 +128,7 @@ public class PeriodWinnerTask extends AbstractBaseTask {
 
     /**
      * 是否已经开奖
+     *
      * @param jsonObject json
      * @return true 已开奖 false 未开奖
      */
@@ -186,9 +187,9 @@ public class PeriodWinnerTask extends AbstractBaseTask {
     private boolean changeProxyRetry() {
         //被屏蔽了，切换代理
         retryNum++;
-        logger.error("被屏蔽了或被限制，重试次数：" + retryNum);
+        logger.error("更换代理重试：" + retryNum);
         if (retryNum >= DEFAULT_RETRY_NUM) {
-            logger.error("抓取完毕！ ");
+            logger.error("重试次数超过" + retryNum + "，放弃该任务！");
             return false;
         }
 

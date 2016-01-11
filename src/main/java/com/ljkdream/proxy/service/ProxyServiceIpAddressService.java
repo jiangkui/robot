@@ -83,9 +83,9 @@ public class ProxyServiceIpAddressService {
         ProxyServerIpAddress proxyServerIpAddress = threadLocal.get();
 
         if (proxyServerIpAddress == null) {
-            if (proxyStrList.size() == 1 && "CN".equals(proxyStrList.get(0))) {
-                return null; //如果是 CN，则首次不适用代理。
-            }
+//            if (proxyStrList.size() == 1 && "CN".equals(proxyStrList.get(0))) {
+//                return null; //如果是 CN，则首次不适用代理。
+//            }
 
             if (cacheProxy.size() == 0) {
                 refreshCache();
