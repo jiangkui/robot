@@ -2,15 +2,19 @@ package com.ljkdream.yiyuanduobao.controller;
 
 import com.ljkdream.core.entity.UnifiedResponse;
 import com.ljkdream.proxy.service.ProxyServiceIpAddressService;
+import com.ljkdream.yiyuanduobao.model.RelationGoodsPeriod;
+import com.ljkdream.yiyuanduobao.schedule.PeriodWinnerSchedule;
 import com.ljkdream.yiyuanduobao.service.YiYuanDuoBaoService;
 import com.ljkdream.yiyuanduobao.task.AllGoodsTask;
-import com.ljkdream.yiyuanduobao.task.AllPeriodWinnerTask;
-import com.ljkdream.yiyuanduobao.task.PeriodWinnerTask;
+import com.ljkdream.yiyuanduobao.task.PeriodWinnerBackwardTask;
 import com.ljkdream.core.task.TaskExecutorFactory;
+import com.ljkdream.yiyuanduobao.task.PeriodWinnerForwardTask;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.List;
 
 /**
  * 测试
@@ -25,17 +29,30 @@ public class YiYuanDuoBaoController {
     @Autowired
     private ProxyServiceIpAddressService proxyServiceIpAddressService;
 
-    @ResponseBody
-    @RequestMapping("grab-period-winner")
-    public UnifiedResponse grabPeriodWinner(Long period, Long gid) {
-        PeriodWinnerTask periodWinnerTask = new PeriodWinnerTask(period, gid, yiYuanDuoBaoService, proxyServiceIpAddressService);
+    @Autowired
+    private PeriodWinnerSchedule periodWinnerSchedule;
 
+    @ResponseBody
+    @RequestMapping("forward")
+    public UnifiedResponse forward(Long period, Long gid) {
+        PeriodWinnerForwardTask periodWinnerTask = new PeriodWinnerForwardTask(period, gid, yiYuanDuoBaoService, proxyServiceIpAddressService);
         try {
             TaskExecutorFactory.getInstance().submitTask(periodWinnerTask);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        return new UnifiedResponse();
+    }
 
+    @ResponseBody
+    @RequestMapping("backward")
+    public UnifiedResponse backward(Long period, Long gid) {
+        PeriodWinnerBackwardTask periodWinnerTask = new PeriodWinnerBackwardTask(period, gid, yiYuanDuoBaoService, proxyServiceIpAddressService);
+        try {
+            TaskExecutorFactory.getInstance().submitTask(periodWinnerTask);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         return new UnifiedResponse();
     }
 
@@ -55,16 +72,25 @@ public class YiYuanDuoBaoController {
     }
 
     @ResponseBody
-    @RequestMapping("grab-all-period-winner")
-    public UnifiedResponse grabAllPeriodGoods() {
-        AllPeriodWinnerTask allPeriodWinnerTask = new AllPeriodWinnerTask(yiYuanDuoBaoService, proxyServiceIpAddressService);
+    @RequestMapping("forwardAll")
+    public UnifiedResponse forwardAll() {
+        periodWinnerSchedule.execute();
+        return new UnifiedResponse();
+    }
 
-        try {
-            TaskExecutorFactory.getInstance().submitTask(allPeriodWinnerTask);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+    @ResponseBody
+    @RequestMapping("backwardAll")
+    public UnifiedResponse backwardAll() {
+        List<RelationGoodsPeriod> list = yiYuanDuoBaoService.queryAllRelationGoodsPeriod();
+        for (RelationGoodsPeriod relationGoodsPeriod : list) {
+            PeriodWinnerBackwardTask periodWinnerBackwardTask = new PeriodWinnerBackwardTask(relationGoodsPeriod.getGid(),
+                    yiYuanDuoBaoService, proxyServiceIpAddressService);
+            try {
+                TaskExecutorFactory.getInstance().submitTask(periodWinnerBackwardTask);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
-
         return new UnifiedResponse();
     }
 }

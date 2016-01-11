@@ -1,8 +1,6 @@
 package com.ljkdream.yiyuanduobao.task;
 
 import com.ljkdream.core.task.AbstractBaseTask;
-import com.ljkdream.core.util.HttpClientUtil;
-import com.ljkdream.proxy.model.ProxyServerIpAddress;
 import com.ljkdream.proxy.service.ProxyServiceIpAddressService;
 import com.ljkdream.yiyuanduobao.entity.GidAndPeriodId;
 import com.ljkdream.yiyuanduobao.model.Goods;
@@ -23,114 +21,29 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 单个商品开奖结果数据抓取任务
- * <p/>
- * 指定某一个商品 id 和期号，从这个商品的设置期号开始向后抓取数据。
- * 如果请求失败，将更换 http代理，重新尝试抓取。
- * <p/>
- * 遇到一下情况会放弃任务：
- * - 当前抓取的期数，之前已经抓去过了
- * - 全部抓取完毕或尝试次数超过 DEFAULT_RETRY_NUM 为止。
- * <p/>
- * Created by ljk on 16-1-3.
+ * periodWinner Task 的基类，提供一些公用的方法
+ * Created by ljk on 16-1-11.
  */
-public class PeriodWinnerTask extends AbstractBaseTask {
+public abstract class BasePeriodWinnerTask extends AbstractBaseTask {
+
+    private static Logger logger = LoggerFactory.getLogger(BasePeriodWinnerTask.class);
 
     //http://1.163.com/goods/getPeriod.do?gid=898&period=212310462
     public static final String BASE_URL = "http://1.163.com/goods/getPeriod.do?";
-    private static Logger logger = LoggerFactory.getLogger(PeriodWinnerTask.class);
-
-    private Long period;
-    private Long gid;
-    private YiYuanDuoBaoService yiYuanDuoBaoService;
-    private ProxyServiceIpAddressService proxyServiceIpAddressService;
-    private Integer executeNum; //该任务执行次数
-
-    private static Random random = new Random();
-    private volatile int retryNum = 0; //更换代理重试请求的次数
     public static final int DEFAULT_RETRY_NUM = 3; //超过重试次数就放弃
-    private static List<String> proxyStrList = new ArrayList<>();
+    protected static List<String> proxyStrList = new ArrayList<>();
+    protected static Random random = new Random();
 
     static {
         proxyStrList.add("CN");
     }
 
-    public PeriodWinnerTask(Long period, Long gid, YiYuanDuoBaoService yiYuanDuoBaoService,
-                            ProxyServiceIpAddressService proxyServiceIpAddressService) {
-        this(period, gid, yiYuanDuoBaoService, proxyServiceIpAddressService, Integer.MAX_VALUE);
-    }
-
-    public PeriodWinnerTask(Long period, Long gid, YiYuanDuoBaoService yiYuanDuoBaoService,
-                            ProxyServiceIpAddressService proxyServiceIpAddressService, Integer executeNum) {
-        this.period = period;
-        this.gid = gid;
-        this.executeNum = executeNum;
-        this.yiYuanDuoBaoService = yiYuanDuoBaoService;
-        this.proxyServiceIpAddressService = proxyServiceIpAddressService;
-    }
-
-    @Override
-    public void execute() {
-        for (int i = 0; i < executeNum; i++) {
-            try {
-                //沉睡一段时间
-                sleep();
-
-                String url = obtainUrl();
-                ProxyServerIpAddress proxy = proxyServiceIpAddressService.obtainProxy(proxyStrList);
-                String resultStr = HttpClientUtil.executeByProxy(url, proxy);
-                JSONObject jsonObject = JSONObject.fromObject(resultStr);
-
-                Object code = jsonObject.get("code");
-
-                //目标服务器返回结果异常
-                if (code == null || ((Integer) code) != 0) {
-                    logger.warn("code = " + code);
-                    if (((Integer) code) == 16) {
-                        logger.info("抓取完毕！");
-                        return;
-                    }
-
-                    if (changeProxyRetry()) { //更换http 代理，重试
-                        continue;
-                    } else {
-                        logger.error("任务停止于： gid:" +gid + " period:" + period);
-                        return;
-                    }
-                } else {
-                    retryNum = 0;
-                }
-
-                //未开奖
-                if (!hasPeriodWinner(jsonObject)) {
-                    continue;
-                }
-
-                //获取 gid 和 periodId
-                GidAndPeriodId gidAndPeriodId = analysisJson(jsonObject);
-
-                //如果该 period 已经抓去过，则获取该商品最早的期数，尝试继续抓取
-//                PeriodWinner periodWinner = yiYuanDuoBaoService.queryPeriodWinnerByPeriod(gidAndPeriodId.getPeriod());
-//                if (periodWinner != null) {
-//                    logger.info("改期已经抓取完毕！ gid:" + gid +" period：" + period);
-//                    PeriodWinner oldDate = yiYuanDuoBaoService.queryOldPeriodWinnerByGid(gid);
-//                    period = oldDate.getPeriod();
-//                    continue;
-//                }
-
-                //存储数据
-                saveDate(jsonObject);
-
-                //设置下一次请求的数据
-                setNextRequestDate(gidAndPeriodId);
-            } catch (Exception e) {
-                changeProxyRetry();
-                e.printStackTrace();
-            }
-        }
-
-        proxyServiceIpAddressService.clearProxy();
-    }
+    protected Long period;
+    protected Long gid;
+    protected YiYuanDuoBaoService yiYuanDuoBaoService;
+    protected ProxyServiceIpAddressService proxyServiceIpAddressService;
+    protected Integer executeNum; //该任务执行次数
+    protected volatile int retryNum = 0; //更换代理重试请求的次数
 
     /**
      * 是否已经开奖
@@ -138,7 +51,7 @@ public class PeriodWinnerTask extends AbstractBaseTask {
      * @param jsonObject json
      * @return true 已开奖 false 未开奖
      */
-    private boolean hasPeriodWinner(JSONObject jsonObject) {
+    protected boolean hasPeriodWinner(JSONObject jsonObject) {
         JSONObject result = jsonObject.getJSONObject("result");
         JSONObject periodWinnerJson = result.getJSONObject("periodWinner");
         if (periodWinnerJson.size() == 0) {
@@ -148,7 +61,12 @@ public class PeriodWinnerTask extends AbstractBaseTask {
         }
     }
 
-    private GidAndPeriodId analysisJson(JSONObject jsonObject) {
+    /**
+     * 解析 json
+     * @param jsonObject json
+     * @return gidAndPeriodId
+     */
+    protected GidAndPeriodId analysisJson(JSONObject jsonObject) {
         JSONObject result = jsonObject.getJSONObject("result");
         JSONObject periodWinnerJson = result.getJSONObject("periodWinner");
         if (periodWinnerJson.size() == 0) {
@@ -180,7 +98,7 @@ public class PeriodWinnerTask extends AbstractBaseTask {
      *
      * @param gidAndPeriodId gid 和 periodId
      */
-    private void setNextRequestDate(GidAndPeriodId gidAndPeriodId) {
+    protected void setNextRequestDate(GidAndPeriodId gidAndPeriodId) {
         this.setGid(gidAndPeriodId.getGid());
         this.setPeriod(gidAndPeriodId.getPeriod());
     }
@@ -190,7 +108,7 @@ public class PeriodWinnerTask extends AbstractBaseTask {
      *
      * @return true 可以继续 false 超过重试次数
      */
-    private boolean changeProxyRetry() {
+    protected boolean changeProxyRetry() {
         //被屏蔽了，切换代理
         retryNum++;
         logger.warn("更换代理重试：" + retryNum);
@@ -206,16 +124,16 @@ public class PeriodWinnerTask extends AbstractBaseTask {
     /**
      * 暂停一段时间
      */
-    private void sleep() {
+    protected void sleep() {
         try {
-            int sleep = random.nextInt(200);
-            logger.info("沉睡：" + sleep + "毫秒");
+            int sleep = random.nextInt(100);
+//            logger.info("沉睡：" + sleep + "毫秒");
             TimeUnit.MILLISECONDS.sleep(sleep);
         } catch (InterruptedException ignored) {
         }
     }
 
-    private void saveDate(JSONObject jsonObject) {
+    protected void saveDate(JSONObject jsonObject) {
         JSONObject result = jsonObject.getJSONObject("result");
         JSONObject periodWinnerJson = result.getJSONObject("periodWinner");
 
@@ -239,7 +157,7 @@ public class PeriodWinnerTask extends AbstractBaseTask {
         yiYuanDuoBaoService.saveGoodsByNotExist(goods);
     }
 
-    private Goods createGoods(JSONObject json) {
+    protected Goods createGoods(JSONObject json) {
         JSONArray gpic = json.getJSONArray("gpic");
         StringBuilder sb = new StringBuilder();
 
@@ -257,7 +175,7 @@ public class PeriodWinnerTask extends AbstractBaseTask {
         return goods;
     }
 
-    private PeriodWinner cratePeriodWinner(JSONObject json) {
+    protected PeriodWinner cratePeriodWinner(JSONObject json) {
         JSONObject owner = json.getJSONObject("owner");
         String cidStr = owner.getString("cid");
         Long cid = Long.parseLong(cidStr);
@@ -297,23 +215,6 @@ public class PeriodWinnerTask extends AbstractBaseTask {
         periodWinner.setDuobaoTimeStr(duobaoTimeStr);
         periodWinner.setCalcTimeStr(calcTimeStr);
         return periodWinner;
-    }
-
-    public String obtainUrl() {
-        StringBuilder sb = new StringBuilder();
-        //&navigation=-1 表示前一期 =1 表示后一期
-        sb.append(BASE_URL).append("gid=").append(gid).append("&period=").append(period).append("&navigation=-1");
-
-        logger.info("请求地址：" + sb.toString());
-        return sb.toString();
-    }
-
-    @Override
-    public String toString() {
-        return "单商品抓取任务{" +
-                "gid=" + gid +
-                ", period=" + period +
-                '}';
     }
 
     public Long getGid() {

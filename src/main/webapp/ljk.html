@@ -6,21 +6,35 @@
 </head>
 <body>
 
-<h2>抓取 有开奖结果的数据</h2>
-<form action="/robot/yiyuanduobao/grab-period-winner.json" method="get">
+<h1>一元夺宝模块</h1>
+<h2>单个商品 向前抓取开奖数据</h2>
+<form action="/robot/yiyuanduobao/forward.json" method="get">
     period:<input type="text" name="period" value="212310462"/>
     gid:<input type="text" name="gid" value="898"/>
     <input type="submit" value="提交"/>
 </form>
 
-<h2>所有商品与当前期号的数据</h2>
+<h2>单个商品 向后抓取开奖数据</h2>
+<form action="/robot/yiyuanduobao/backward.json" method="get">
+    period:<input type="text" name="period" value="212310462"/>
+    gid:<input type="text" name="gid" value="898"/>
+    <input type="submit" value="提交"/>
+</form>
+
+
+<h2>抓取所有商品数据</h2>
 <form action="/robot/yiyuanduobao/grab-all-goods.json" method="get">
     page:<input type="text" name="page" value="1"/>
     <input type="submit" value="提交"/>
 </form>
 
-<h2>所有商品的所有数据</h2>
-<form action="/robot/yiyuanduobao/grab-all-period-winner.json" method="post">
+<h2>向前抓取所有数据</h2>
+<form action="/robot/yiyuanduobao/forwardAll.json" method="post">
+    <input type="submit" value="提交"/>
+</form>
+
+<h2>向后抓取所有数据</h2>
+<form action="/robot/yiyuanduobao/backwardAll.json" method="post">
     <input type="submit" value="提交"/>
 </form>
 
