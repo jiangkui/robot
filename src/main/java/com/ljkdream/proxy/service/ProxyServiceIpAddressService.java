@@ -57,7 +57,7 @@ public class ProxyServiceIpAddressService {
      */
     public void refreshCache() {
         ProxyServerIpAddressExample example = new ProxyServerIpAddressExample();
-
+        example.createCriteria().andSpeedEqualTo(1); //只查询高速代理
         List<ProxyServerIpAddress> list = proxyMapper.selectByExample(example);
 
         for (ProxyServerIpAddress proxy : list) {
@@ -83,9 +83,9 @@ public class ProxyServiceIpAddressService {
         ProxyServerIpAddress proxyServerIpAddress = threadLocal.get();
 
         if (proxyServerIpAddress == null) {
-//            if (proxyStrList.size() == 1 && "CN".equals(proxyStrList.get(0))) {
-//                return null; //如果是 CN，则首次不适用代理。
-//            }
+            if (proxyStrList.size() == 1 && "CN".equals(proxyStrList.get(0))) {
+                return null; //如果是 CN，则首次不适用代理。
+            }
 
             if (cacheProxy.size() == 0) {
                 refreshCache();
@@ -194,5 +194,27 @@ public class ProxyServiceIpAddressService {
 
     public void clearProxy() {
         threadLocal.remove();
+    }
+
+    public List<ProxyServerIpAddress> queryAll() {
+        ProxyServerIpAddressExample example = new ProxyServerIpAddressExample();
+
+        List<ProxyServerIpAddress> list = proxyMapper.selectByExample(example);
+
+        return list;
+    }
+
+    public int updateByPrimaryKeySelective(ProxyServerIpAddress proxyServerIpAddress) {
+        int i = proxyMapper.updateByPrimaryKeySelective(proxyServerIpAddress);
+        return i;
+    }
+
+    public List<ProxyServerIpAddress> queryAllByDoman(String doman) {
+        ProxyServerIpAddressExample example = new ProxyServerIpAddressExample();
+        example.createCriteria().andCountryDomainEqualTo(doman);
+
+        List<ProxyServerIpAddress> list = proxyMapper.selectByExample(example);
+
+        return list;
     }
 }

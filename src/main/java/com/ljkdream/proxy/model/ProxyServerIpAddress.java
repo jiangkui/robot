@@ -4,6 +4,7 @@ import java.util.Date;
 
 public class ProxyServerIpAddress {
     public static final int STATUS_NORMAL = 1;//正常状态
+    public static final int STATUS_CAN_NOT_USED = 2;//不能用
 
     public static final int TYPE_ONE = 1;//透明代理
     public static final int TYPE_TWO = 2;//高度匿名
@@ -14,16 +15,20 @@ public class ProxyServerIpAddress {
     public static final int LEVEL_THREE = 3;//速读等级 1~5 s
     public static final int LEVEL_FORE = 4;//速读等级 >5 s
 
+    public static final int LEVEL_ONE_SPEED = 500;//等级一 的速度
+    public static final int LEVEL_TWO_SPEED = 1000;//等级2 的速度
+    public static final int LEVEL_THREE_SPEED = 5000;//等级3 的速度
+
     public static int level(int speed) {
-        if (speed < 500) {
+        if (speed < LEVEL_ONE_SPEED) {
             return LEVEL_ONE;
         }
 
-        if (speed < 1000) {
+        if (speed < LEVEL_TWO_SPEED) {
             return LEVEL_TWO;
         }
 
-        if (speed < 5000) {
+        if (speed < LEVEL_THREE_SPEED) {
             return LEVEL_THREE;
         }
 
