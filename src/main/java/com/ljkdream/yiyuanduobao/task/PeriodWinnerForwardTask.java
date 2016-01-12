@@ -39,8 +39,9 @@ public class PeriodWinnerForwardTask extends BasePeriodWinnerTask {
 
     @Override
     public void execute() {
-        if (period < 0) {
-            PeriodWinner winner = yiYuanDuoBaoService.queryNewPeriodWinnerByGid(gid);
+        //如果数据库中已经有该商品的开奖记录了，则从改期开始向前抓取，如果没有，则使用传入的旗号。
+        PeriodWinner winner = yiYuanDuoBaoService.queryNewPeriodWinnerByGid(gid);
+        if (period != null) {
             period = winner.getPeriod();
         }
 
