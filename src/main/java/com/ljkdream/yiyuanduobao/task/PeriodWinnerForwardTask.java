@@ -76,20 +76,12 @@ public class PeriodWinnerForwardTask extends BasePeriodWinnerTask {
 
                 //未开奖
                 if (!hasPeriodWinner(jsonObject)) {
-                    continue;
+                    logger.error("未开奖！任务停止于： gid:" +gid + " period:" + period);
+                    return;
                 }
 
                 //获取 gid 和 periodId
                 GidAndPeriodId gidAndPeriodId = analysisJson(jsonObject);
-
-//                如果该 period 已经抓去过，则获取该商品最早的期数，尝试继续抓取
-                PeriodWinner periodWinner = yiYuanDuoBaoService.queryPeriodWinnerByPeriod(gidAndPeriodId.getPeriod());
-                if (periodWinner != null) {
-                    logger.info("改期已经抓取完毕！ gid:" + gid +" period：" + period);
-                    PeriodWinner oldDate = yiYuanDuoBaoService.queryOldPeriodWinnerByGid(gid);
-                    period = oldDate.getPeriod();
-                    continue;
-                }
 
                 //存储数据
                 saveDate(jsonObject);

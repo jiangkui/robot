@@ -27,9 +27,9 @@ public class PeriodWinnerSchedule {
     private ProxyServiceIpAddressService proxyServiceIpAddressService;
 
     /**
-     * 凌晨抓取
+     * 向前抓取最近的开奖数据。
      */
-    @Scheduled(cron = "0 0 1-3 * * ?")
+    @Scheduled(cron = "0 0 * * * ?")
     public void execute() {
         List<RelationGoodsPeriod> list = yiYuanDuoBaoService.queryAllRelationGoodsPeriod();
 

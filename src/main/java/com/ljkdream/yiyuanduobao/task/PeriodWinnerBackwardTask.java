@@ -85,7 +85,8 @@ public class PeriodWinnerBackwardTask extends BasePeriodWinnerTask {
 
                 //未开奖
                 if (!hasPeriodWinner(jsonObject)) {
-                    continue;
+                    logger.error("未开奖！任务停止于： gid:" +gid + " period:" + period);
+                    return;
                 }
 
                 //获取 gid 和 periodId
