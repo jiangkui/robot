@@ -27,7 +27,7 @@ public class PeriodWinnerBackwardTask extends BasePeriodWinnerTask {
     private static Logger logger = LoggerFactory.getLogger(PeriodWinnerBackwardTask.class);
 
     public PeriodWinnerBackwardTask(Long gid, YiYuanDuoBaoService yiYuanDuoBaoService,
-                                   ProxyServiceIpAddressService proxyServiceIpAddressService) {
+                                    ProxyServiceIpAddressService proxyServiceIpAddressService) {
         this(-1L, gid, yiYuanDuoBaoService, proxyServiceIpAddressService);
     }
 
@@ -76,7 +76,7 @@ public class PeriodWinnerBackwardTask extends BasePeriodWinnerTask {
                     if (changeProxyRetry()) { //更换http 代理，重试
                         continue;
                     } else {
-                        logger.error("任务停止于： gid:" +gid + " period:" + period);
+                        logger.error("任务停止于： gid:" + gid + " period:" + period);
                         return;
                     }
                 } else {
@@ -85,7 +85,7 @@ public class PeriodWinnerBackwardTask extends BasePeriodWinnerTask {
 
                 //未开奖
                 if (!hasPeriodWinner(jsonObject)) {
-                    logger.error("未开奖！任务停止于： gid:" +gid + " period:" + period);
+                    logger.error("未开奖！任务停止于： gid:" + gid + " period:" + period);
                     return;
                 }
 
