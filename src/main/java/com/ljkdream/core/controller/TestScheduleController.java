@@ -39,22 +39,5 @@ public class TestScheduleController {
 //        return new UnifiedResponse();
 //    }
 
-    @ResponseBody
-    @RequestMapping("fillHeap")
-    public UnifiedResponse fillHeap() throws InterruptedException {
-        List<OOMObject> list = new ArrayList<>();
 
-        for (int i = 0; i < 1000; i++) {
-            TimeUnit.MILLISECONDS.sleep(50);
-            list.add(new OOMObject());
-            logger.info("fill heap..." + i);
-        }
-        System.gc();
-        logger.info("内存回收完毕！");
-        return new UnifiedResponse();
-    }
-}
-
-class OOMObject {
-    public byte[] placeholder = new byte[64 * 1024];
 }
