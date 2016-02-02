@@ -12,6 +12,9 @@
     <result column="nickname" property="nickname" jdbcType="VARCHAR" />
     <result column="IP_address" property="ipAddress" jdbcType="VARCHAR" />
     <result column="IP" property="ip" jdbcType="VARCHAR" />
+    <result column="rid" property="rid" jdbcType="INTEGER" />
+    <result column="device" property="device" jdbcType="VARCHAR" />
+    <result column="regular_buy" property="regularBuy" jdbcType="INTEGER" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
   </resultMap>
@@ -74,7 +77,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, gid, period, num, time, cid, uid, nickname, IP_address, IP, create_time, modify_time
+    id, gid, period, num, time, cid, uid, nickname, IP_address, IP, rid, device, regular_buy, 
+    create_time, modify_time
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.ljkdream.yiyuanduobao.model.BuyRecordExample" >
     select
@@ -110,10 +114,12 @@
     insert into buy_record (id, gid, period, 
       num, time, cid, uid, 
       nickname, IP_address, IP, 
+      rid, device, regular_buy, 
       create_time, modify_time)
     values (#{id,jdbcType=BIGINT}, #{gid,jdbcType=BIGINT}, #{period,jdbcType=BIGINT}, 
       #{num,jdbcType=INTEGER}, #{time,jdbcType=VARCHAR}, #{cid,jdbcType=BIGINT}, #{uid,jdbcType=VARCHAR}, 
       #{nickname,jdbcType=VARCHAR}, #{ipAddress,jdbcType=VARCHAR}, #{ip,jdbcType=VARCHAR}, 
+      #{rid,jdbcType=INTEGER}, #{device,jdbcType=VARCHAR}, #{regularBuy,jdbcType=INTEGER}, 
       #{createTime,jdbcType=TIMESTAMP}, #{modifyTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.ljkdream.yiyuanduobao.model.BuyRecord" >
@@ -148,6 +154,15 @@
       </if>
       <if test="ip != null" >
         IP,
+      </if>
+      <if test="rid != null" >
+        rid,
+      </if>
+      <if test="device != null" >
+        device,
+      </if>
+      <if test="regularBuy != null" >
+        regular_buy,
       </if>
       <if test="createTime != null" >
         create_time,
@@ -186,6 +201,15 @@
       </if>
       <if test="ip != null" >
         #{ip,jdbcType=VARCHAR},
+      </if>
+      <if test="rid != null" >
+        #{rid,jdbcType=INTEGER},
+      </if>
+      <if test="device != null" >
+        #{device,jdbcType=VARCHAR},
+      </if>
+      <if test="regularBuy != null" >
+        #{regularBuy,jdbcType=INTEGER},
       </if>
       <if test="createTime != null" >
         #{createTime,jdbcType=TIMESTAMP},
@@ -234,6 +258,15 @@
       <if test="record.ip != null" >
         IP = #{record.ip,jdbcType=VARCHAR},
       </if>
+      <if test="record.rid != null" >
+        rid = #{record.rid,jdbcType=INTEGER},
+      </if>
+      <if test="record.device != null" >
+        device = #{record.device,jdbcType=VARCHAR},
+      </if>
+      <if test="record.regularBuy != null" >
+        regular_buy = #{record.regularBuy,jdbcType=INTEGER},
+      </if>
       <if test="record.createTime != null" >
         create_time = #{record.createTime,jdbcType=TIMESTAMP},
       </if>
@@ -257,6 +290,9 @@
       nickname = #{record.nickname,jdbcType=VARCHAR},
       IP_address = #{record.ipAddress,jdbcType=VARCHAR},
       IP = #{record.ip,jdbcType=VARCHAR},
+      rid = #{record.rid,jdbcType=INTEGER},
+      device = #{record.device,jdbcType=VARCHAR},
+      regular_buy = #{record.regularBuy,jdbcType=INTEGER},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       modify_time = #{record.modifyTime,jdbcType=TIMESTAMP}
     <if test="_parameter != null" >
@@ -293,6 +329,15 @@
       <if test="ip != null" >
         IP = #{ip,jdbcType=VARCHAR},
       </if>
+      <if test="rid != null" >
+        rid = #{rid,jdbcType=INTEGER},
+      </if>
+      <if test="device != null" >
+        device = #{device,jdbcType=VARCHAR},
+      </if>
+      <if test="regularBuy != null" >
+        regular_buy = #{regularBuy,jdbcType=INTEGER},
+      </if>
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
@@ -313,6 +358,9 @@
       nickname = #{nickname,jdbcType=VARCHAR},
       IP_address = #{ipAddress,jdbcType=VARCHAR},
       IP = #{ip,jdbcType=VARCHAR},
+      rid = #{rid,jdbcType=INTEGER},
+      device = #{device,jdbcType=VARCHAR},
+      regular_buy = #{regularBuy,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       modify_time = #{modifyTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}

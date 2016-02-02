@@ -755,6 +755,196 @@ public class BuyRecordExample {
             return (Criteria) this;
         }
 
+        public Criteria andRidIsNull() {
+            addCriterion("rid is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRidIsNotNull() {
+            addCriterion("rid is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRidEqualTo(Integer value) {
+            addCriterion("rid =", value, "rid");
+            return (Criteria) this;
+        }
+
+        public Criteria andRidNotEqualTo(Integer value) {
+            addCriterion("rid <>", value, "rid");
+            return (Criteria) this;
+        }
+
+        public Criteria andRidGreaterThan(Integer value) {
+            addCriterion("rid >", value, "rid");
+            return (Criteria) this;
+        }
+
+        public Criteria andRidGreaterThanOrEqualTo(Integer value) {
+            addCriterion("rid >=", value, "rid");
+            return (Criteria) this;
+        }
+
+        public Criteria andRidLessThan(Integer value) {
+            addCriterion("rid <", value, "rid");
+            return (Criteria) this;
+        }
+
+        public Criteria andRidLessThanOrEqualTo(Integer value) {
+            addCriterion("rid <=", value, "rid");
+            return (Criteria) this;
+        }
+
+        public Criteria andRidIn(List<Integer> values) {
+            addCriterion("rid in", values, "rid");
+            return (Criteria) this;
+        }
+
+        public Criteria andRidNotIn(List<Integer> values) {
+            addCriterion("rid not in", values, "rid");
+            return (Criteria) this;
+        }
+
+        public Criteria andRidBetween(Integer value1, Integer value2) {
+            addCriterion("rid between", value1, value2, "rid");
+            return (Criteria) this;
+        }
+
+        public Criteria andRidNotBetween(Integer value1, Integer value2) {
+            addCriterion("rid not between", value1, value2, "rid");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceIsNull() {
+            addCriterion("device is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceIsNotNull() {
+            addCriterion("device is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceEqualTo(String value) {
+            addCriterion("device =", value, "device");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceNotEqualTo(String value) {
+            addCriterion("device <>", value, "device");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceGreaterThan(String value) {
+            addCriterion("device >", value, "device");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceGreaterThanOrEqualTo(String value) {
+            addCriterion("device >=", value, "device");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceLessThan(String value) {
+            addCriterion("device <", value, "device");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceLessThanOrEqualTo(String value) {
+            addCriterion("device <=", value, "device");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceLike(String value) {
+            addCriterion("device like", value, "device");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceNotLike(String value) {
+            addCriterion("device not like", value, "device");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceIn(List<String> values) {
+            addCriterion("device in", values, "device");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceNotIn(List<String> values) {
+            addCriterion("device not in", values, "device");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceBetween(String value1, String value2) {
+            addCriterion("device between", value1, value2, "device");
+            return (Criteria) this;
+        }
+
+        public Criteria andDeviceNotBetween(String value1, String value2) {
+            addCriterion("device not between", value1, value2, "device");
+            return (Criteria) this;
+        }
+
+        public Criteria andRegularBuyIsNull() {
+            addCriterion("regular_buy is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRegularBuyIsNotNull() {
+            addCriterion("regular_buy is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRegularBuyEqualTo(Integer value) {
+            addCriterion("regular_buy =", value, "regularBuy");
+            return (Criteria) this;
+        }
+
+        public Criteria andRegularBuyNotEqualTo(Integer value) {
+            addCriterion("regular_buy <>", value, "regularBuy");
+            return (Criteria) this;
+        }
+
+        public Criteria andRegularBuyGreaterThan(Integer value) {
+            addCriterion("regular_buy >", value, "regularBuy");
+            return (Criteria) this;
+        }
+
+        public Criteria andRegularBuyGreaterThanOrEqualTo(Integer value) {
+            addCriterion("regular_buy >=", value, "regularBuy");
+            return (Criteria) this;
+        }
+
+        public Criteria andRegularBuyLessThan(Integer value) {
+            addCriterion("regular_buy <", value, "regularBuy");
+            return (Criteria) this;
+        }
+
+        public Criteria andRegularBuyLessThanOrEqualTo(Integer value) {
+            addCriterion("regular_buy <=", value, "regularBuy");
+            return (Criteria) this;
+        }
+
+        public Criteria andRegularBuyIn(List<Integer> values) {
+            addCriterion("regular_buy in", values, "regularBuy");
+            return (Criteria) this;
+        }
+
+        public Criteria andRegularBuyNotIn(List<Integer> values) {
+            addCriterion("regular_buy not in", values, "regularBuy");
+            return (Criteria) this;
+        }
+
+        public Criteria andRegularBuyBetween(Integer value1, Integer value2) {
+            addCriterion("regular_buy between", value1, value2, "regularBuy");
+            return (Criteria) this;
+        }
+
+        public Criteria andRegularBuyNotBetween(Integer value1, Integer value2) {
+            addCriterion("regular_buy not between", value1, value2, "regularBuy");
+            return (Criteria) this;
+        }
+
         public Criteria andCreateTimeIsNull() {
             addCriterion("create_time is null");
             return (Criteria) this;

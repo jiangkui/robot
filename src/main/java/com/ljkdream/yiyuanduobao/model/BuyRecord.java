@@ -23,6 +23,12 @@ public class BuyRecord {
 
     private String ip;
 
+    private Integer rid;
+
+    private String device;
+
+    private Integer regularBuy;
+
     private Date createTime;
 
     private Date modifyTime;
@@ -105,6 +111,30 @@ public class BuyRecord {
 
     public void setIp(String ip) {
         this.ip = ip == null ? null : ip.trim();
+    }
+
+    public Integer getRid() {
+        return rid;
+    }
+
+    public void setRid(Integer rid) {
+        this.rid = rid;
+    }
+
+    public String getDevice() {
+        return device;
+    }
+
+    public void setDevice(String device) {
+        this.device = device == null ? null : device.trim();
+    }
+
+    public Integer getRegularBuy() {
+        return regularBuy;
+    }
+
+    public void setRegularBuy(Integer regularBuy) {
+        this.regularBuy = regularBuy;
     }
 
     public Date getCreateTime() {

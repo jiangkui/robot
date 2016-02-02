@@ -9,7 +9,7 @@ public class GrabBuyRecord {
 
     private Long period;
 
-    private Integer totalcnt;
+    private Integer totalCnt;
 
     private String url;
 
@@ -41,12 +41,12 @@ public class GrabBuyRecord {
         this.period = period;
     }
 
-    public Integer getTotalcnt() {
-        return totalcnt;
+    public Integer getTotalCnt() {
+        return totalCnt;
     }
 
-    public void setTotalcnt(Integer totalcnt) {
-        this.totalcnt = totalcnt;
+    public void setTotalCnt(Integer totalCnt) {
+        this.totalCnt = totalCnt;
     }
 
     public String getUrl() {

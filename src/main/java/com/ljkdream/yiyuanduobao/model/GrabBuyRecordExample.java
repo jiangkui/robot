@@ -285,63 +285,63 @@ public class GrabBuyRecordExample {
             return (Criteria) this;
         }
 
-        public Criteria andTotalcntIsNull() {
-            addCriterion("totalCnt is null");
+        public Criteria andTotalCntIsNull() {
+            addCriterion("total_cnt is null");
             return (Criteria) this;
         }
 
-        public Criteria andTotalcntIsNotNull() {
-            addCriterion("totalCnt is not null");
+        public Criteria andTotalCntIsNotNull() {
+            addCriterion("total_cnt is not null");
             return (Criteria) this;
         }
 
-        public Criteria andTotalcntEqualTo(Integer value) {
-            addCriterion("totalCnt =", value, "totalcnt");
+        public Criteria andTotalCntEqualTo(Integer value) {
+            addCriterion("total_cnt =", value, "totalCnt");
             return (Criteria) this;
         }
 
-        public Criteria andTotalcntNotEqualTo(Integer value) {
-            addCriterion("totalCnt <>", value, "totalcnt");
+        public Criteria andTotalCntNotEqualTo(Integer value) {
+            addCriterion("total_cnt <>", value, "totalCnt");
             return (Criteria) this;
         }
 
-        public Criteria andTotalcntGreaterThan(Integer value) {
-            addCriterion("totalCnt >", value, "totalcnt");
+        public Criteria andTotalCntGreaterThan(Integer value) {
+            addCriterion("total_cnt >", value, "totalCnt");
             return (Criteria) this;
         }
 
-        public Criteria andTotalcntGreaterThanOrEqualTo(Integer value) {
-            addCriterion("totalCnt >=", value, "totalcnt");
+        public Criteria andTotalCntGreaterThanOrEqualTo(Integer value) {
+            addCriterion("total_cnt >=", value, "totalCnt");
             return (Criteria) this;
         }
 
-        public Criteria andTotalcntLessThan(Integer value) {
-            addCriterion("totalCnt <", value, "totalcnt");
+        public Criteria andTotalCntLessThan(Integer value) {
+            addCriterion("total_cnt <", value, "totalCnt");
             return (Criteria) this;
         }
 
-        public Criteria andTotalcntLessThanOrEqualTo(Integer value) {
-            addCriterion("totalCnt <=", value, "totalcnt");
+        public Criteria andTotalCntLessThanOrEqualTo(Integer value) {
+            addCriterion("total_cnt <=", value, "totalCnt");
             return (Criteria) this;
         }
 
-        public Criteria andTotalcntIn(List<Integer> values) {
-            addCriterion("totalCnt in", values, "totalcnt");
+        public Criteria andTotalCntIn(List<Integer> values) {
+            addCriterion("total_cnt in", values, "totalCnt");
             return (Criteria) this;
         }
 
-        public Criteria andTotalcntNotIn(List<Integer> values) {
-            addCriterion("totalCnt not in", values, "totalcnt");
+        public Criteria andTotalCntNotIn(List<Integer> values) {
+            addCriterion("total_cnt not in", values, "totalCnt");
             return (Criteria) this;
         }
 
-        public Criteria andTotalcntBetween(Integer value1, Integer value2) {
-            addCriterion("totalCnt between", value1, value2, "totalcnt");
+        public Criteria andTotalCntBetween(Integer value1, Integer value2) {
+            addCriterion("total_cnt between", value1, value2, "totalCnt");
             return (Criteria) this;
         }
 
-        public Criteria andTotalcntNotBetween(Integer value1, Integer value2) {
-            addCriterion("totalCnt not between", value1, value2, "totalcnt");
+        public Criteria andTotalCntNotBetween(Integer value1, Integer value2) {
+            addCriterion("total_cnt not between", value1, value2, "totalCnt");
             return (Criteria) this;
         }
 

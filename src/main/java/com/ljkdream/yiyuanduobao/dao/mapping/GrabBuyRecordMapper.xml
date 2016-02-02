@@ -5,7 +5,7 @@
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="gid" property="gid" jdbcType="BIGINT" />
     <result column="period" property="period" jdbcType="BIGINT" />
-    <result column="totalCnt" property="totalcnt" jdbcType="INTEGER" />
+    <result column="total_cnt" property="totalCnt" jdbcType="INTEGER" />
     <result column="url" property="url" jdbcType="VARCHAR" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP" />
@@ -69,7 +69,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, gid, period, totalCnt, url, create_time, modify_time
+    id, gid, period, total_cnt, url, create_time, modify_time
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.ljkdream.yiyuanduobao.model.GrabBuyRecordExample" >
     select
@@ -103,10 +103,10 @@
   </delete>
   <insert id="insert" parameterType="com.ljkdream.yiyuanduobao.model.GrabBuyRecord" >
     insert into grab_buy_record (id, gid, period, 
-      totalCnt, url, create_time, 
+      total_cnt, url, create_time, 
       modify_time)
     values (#{id,jdbcType=BIGINT}, #{gid,jdbcType=BIGINT}, #{period,jdbcType=BIGINT}, 
-      #{totalcnt,jdbcType=INTEGER}, #{url,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{totalCnt,jdbcType=INTEGER}, #{url,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
       #{modifyTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.ljkdream.yiyuanduobao.model.GrabBuyRecord" >
@@ -121,8 +121,8 @@
       <if test="period != null" >
         period,
       </if>
-      <if test="totalcnt != null" >
-        totalCnt,
+      <if test="totalCnt != null" >
+        total_cnt,
       </if>
       <if test="url != null" >
         url,
@@ -144,8 +144,8 @@
       <if test="period != null" >
         #{period,jdbcType=BIGINT},
       </if>
-      <if test="totalcnt != null" >
-        #{totalcnt,jdbcType=INTEGER},
+      <if test="totalCnt != null" >
+        #{totalCnt,jdbcType=INTEGER},
       </if>
       <if test="url != null" >
         #{url,jdbcType=VARCHAR},
@@ -176,8 +176,8 @@
       <if test="record.period != null" >
         period = #{record.period,jdbcType=BIGINT},
       </if>
-      <if test="record.totalcnt != null" >
-        totalCnt = #{record.totalcnt,jdbcType=INTEGER},
+      <if test="record.totalCnt != null" >
+        total_cnt = #{record.totalCnt,jdbcType=INTEGER},
       </if>
       <if test="record.url != null" >
         url = #{record.url,jdbcType=VARCHAR},
@@ -198,7 +198,7 @@
     set id = #{record.id,jdbcType=BIGINT},
       gid = #{record.gid,jdbcType=BIGINT},
       period = #{record.period,jdbcType=BIGINT},
-      totalCnt = #{record.totalcnt,jdbcType=INTEGER},
+      total_cnt = #{record.totalCnt,jdbcType=INTEGER},
       url = #{record.url,jdbcType=VARCHAR},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       modify_time = #{record.modifyTime,jdbcType=TIMESTAMP}
@@ -215,8 +215,8 @@
       <if test="period != null" >
         period = #{period,jdbcType=BIGINT},
       </if>
-      <if test="totalcnt != null" >
-        totalCnt = #{totalcnt,jdbcType=INTEGER},
+      <if test="totalCnt != null" >
+        total_cnt = #{totalCnt,jdbcType=INTEGER},
       </if>
       <if test="url != null" >
         url = #{url,jdbcType=VARCHAR},
@@ -234,7 +234,7 @@
     update grab_buy_record
     set gid = #{gid,jdbcType=BIGINT},
       period = #{period,jdbcType=BIGINT},
-      totalCnt = #{totalcnt,jdbcType=INTEGER},
+      total_cnt = #{totalCnt,jdbcType=INTEGER},
       url = #{url,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       modify_time = #{modifyTime,jdbcType=TIMESTAMP}
