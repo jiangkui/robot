@@ -4,9 +4,10 @@ import com.ljkdream.core.task.AbstractBaseTask;
 import com.ljkdream.proxy.service.ProxyServiceIpAddressService;
 import com.ljkdream.yiyuanduobao.entity.GidAndPeriodId;
 import com.ljkdream.yiyuanduobao.model.Goods;
+import com.ljkdream.yiyuanduobao.model.GrabBuyRecord;
 import com.ljkdream.yiyuanduobao.model.PeriodWinner;
 import com.ljkdream.yiyuanduobao.model.User;
-import com.ljkdream.yiyuanduobao.service.YiYuanDuoBaoService;
+import com.ljkdream.yiyuanduobao.service.*;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.slf4j.Logger;
@@ -40,10 +41,16 @@ public abstract class BasePeriodWinnerTask extends AbstractBaseTask {
 
     protected Long period;
     protected Long gid;
-    protected YiYuanDuoBaoService yiYuanDuoBaoService;
-    protected ProxyServiceIpAddressService proxyServiceIpAddressService;
     protected Integer executeNum; //该任务执行次数
     protected volatile int retryNum = 0; //更换代理重试请求的次数
+
+    protected static RelationGoodsPeriodService relationGoodsPeriodService;
+    protected static PeriodWinnerService periodWinnerService;
+    protected static GoodsService goodsService;
+    protected static GrabBuyRecordService grabBuyRecordService;
+    protected static UserService userService;
+    protected static ProxyServiceIpAddressService proxyServiceIpAddressService;
+
 
     /**
      * 是否已经开奖
@@ -152,9 +159,9 @@ public abstract class BasePeriodWinnerTask extends AbstractBaseTask {
         goods.setCreateTime(now);
         goods.setModifyTime(now);
 
-        yiYuanDuoBaoService.savePeriodWinnerByNotExist(periodWinner);
-        yiYuanDuoBaoService.saveUserByNotExist(user);
-        yiYuanDuoBaoService.saveGoodsByNotExist(goods);
+        periodWinnerService.savePeriodWinnerByNotExist(periodWinner);
+        userService.saveUserByNotExist(user);
+        goodsService.saveGoodsByNotExist(goods);
     }
 
     protected Goods createGoods(JSONObject json) {

@@ -5,7 +5,7 @@ import com.ljkdream.proxy.model.ProxyServerIpAddress;
 import com.ljkdream.proxy.service.ProxyServiceIpAddressService;
 import com.ljkdream.yiyuanduobao.entity.GidAndPeriodId;
 import com.ljkdream.yiyuanduobao.model.PeriodWinner;
-import com.ljkdream.yiyuanduobao.service.YiYuanDuoBaoService;
+import com.ljkdream.yiyuanduobao.service.RelationGoodsPeriodService;
 import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,18 +18,18 @@ public class PeriodWinnerForwardTask extends BasePeriodWinnerTask {
 
     private static Logger logger = LoggerFactory.getLogger(PeriodWinnerForwardTask.class);
 
-    public PeriodWinnerForwardTask(Long gid, YiYuanDuoBaoService yiYuanDuoBaoService,
+    public PeriodWinnerForwardTask(Long gid, RelationGoodsPeriodService yiYuanDuoBaoService,
                                    ProxyServiceIpAddressService proxyServiceIpAddressService) {
         this(-1L, gid, yiYuanDuoBaoService, proxyServiceIpAddressService);
     }
 
-    public PeriodWinnerForwardTask(Long period, Long gid, YiYuanDuoBaoService yiYuanDuoBaoService,
+    public PeriodWinnerForwardTask(Long period, Long gid, RelationGoodsPeriodService yiYuanDuoBaoService,
                                    ProxyServiceIpAddressService proxyServiceIpAddressService) {
         this(period, gid, yiYuanDuoBaoService, proxyServiceIpAddressService, Integer.MAX_VALUE);
     }
 
-    public PeriodWinnerForwardTask(Long period, Long gid, YiYuanDuoBaoService yiYuanDuoBaoService,
-                            ProxyServiceIpAddressService proxyServiceIpAddressService, Integer executeNum) {
+    public PeriodWinnerForwardTask(Long period, Long gid, RelationGoodsPeriodService yiYuanDuoBaoService,
+                                   ProxyServiceIpAddressService proxyServiceIpAddressService, Integer executeNum) {
         this.period = period;
         this.gid = gid;
         this.executeNum = executeNum;

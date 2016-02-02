@@ -2,10 +2,8 @@ package com.ljkdream.yiyuanduobao.schedule;
 
 import com.ljkdream.core.task.TaskExecutorFactory;
 import com.ljkdream.proxy.service.ProxyServiceIpAddressService;
-import com.ljkdream.proxy.task.CnProxyComTask;
 import com.ljkdream.yiyuanduobao.model.RelationGoodsPeriod;
-import com.ljkdream.yiyuanduobao.service.YiYuanDuoBaoService;
-import com.ljkdream.yiyuanduobao.task.PeriodWinnerBackwardTask;
+import com.ljkdream.yiyuanduobao.service.RelationGoodsPeriodService;
 import com.ljkdream.yiyuanduobao.task.PeriodWinnerForwardTask;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -21,7 +19,7 @@ import java.util.List;
 public class PeriodWinnerSchedule {
 
     @Autowired
-    private YiYuanDuoBaoService yiYuanDuoBaoService;
+    private RelationGoodsPeriodService yiYuanDuoBaoService;
 
     @Autowired
     private ProxyServiceIpAddressService proxyServiceIpAddressService;

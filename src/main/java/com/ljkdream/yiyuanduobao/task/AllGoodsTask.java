@@ -1,6 +1,6 @@
 package com.ljkdream.yiyuanduobao.task;
 
-import com.ljkdream.yiyuanduobao.service.YiYuanDuoBaoService;
+import com.ljkdream.yiyuanduobao.service.RelationGoodsPeriodService;
 import com.ljkdream.core.task.AbstractBaseTask;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -33,10 +33,10 @@ public class AllGoodsTask extends AbstractBaseTask {
 
     private static Logger logger = LoggerFactory.getLogger(AllGoodsTask.class);
 
-    private YiYuanDuoBaoService yiYuanDuoBaoService;
+    private RelationGoodsPeriodService yiYuanDuoBaoService;
     private int page = 1;
 
-    public AllGoodsTask(YiYuanDuoBaoService yiYuanDuoBaoService, int page) {
+    public AllGoodsTask(RelationGoodsPeriodService yiYuanDuoBaoService, int page) {
         this.yiYuanDuoBaoService = yiYuanDuoBaoService;
         this.page = page;
     }

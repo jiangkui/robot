@@ -5,8 +5,8 @@
 <generatorConfiguration>
     <!--数据库驱动-->
     <classPathEntry
-            location="/home/ljk/.m2/repository/mysql/mysql-connector-java/5.1.6/mysql-connector-java-5.1.6.jar"/>
-            <!--location="/home/jiangkui/.m2/repository/mysql/mysql-connector-java/5.1.6/mysql-connector-java-5.1.6.jar"/>-->
+            location="/home/jiangkui/.m2/repository/mysql/mysql-connector-java/5.1.6/mysql-connector-java-5.1.6.jar"/>
+    <!--location="/home/ljk/.m2/repository/mysql/mysql-connector-java/5.1.6/mysql-connector-java-5.1.6.jar"/>-->
     <context id="DB2Tables" targetRuntime="MyBatis3">
         <commentGenerator>
             <property name="suppressDate" value="true"/>
@@ -45,7 +45,7 @@
         <!--</table>-->
         <!--<table tableName="relation_goods_period"/>-->
         <!--<table tableName="proxy_server_ip_address"/>-->
-        <table tableName="buy_record"/>
+        <!--<table tableName="buy_record"/>-->
         <table tableName="grab_buy_record"/>
     </context>
 </generatorConfiguration>

@@ -138,10 +138,12 @@ create table `grab_buy_record`(
     `period` bigint(20) NOT NULL COMMENT '期号',
     `total_cnt` int(11) NOT NULL DEFAULT 0 COMMENT '总记录数量',
     `url` varchar(200) NOT NULL COMMENT '请求链接',
+    `status` int(11) NOT NULL DEFAULT 0 COMMENT '0-默认， 1-抓取完毕',
     `create_time` datetime COMMENT '创建时间',
     `modify_time` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
     PRIMARY KEY (`id`),
-    KEY `idx_periodGid` (`period`,`gid`)
+    KEY `idx_periodGid` (`period`,`gid`),
+    UNIQUE KEY `UNIQUE_periodGid` (`period`,`gid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 

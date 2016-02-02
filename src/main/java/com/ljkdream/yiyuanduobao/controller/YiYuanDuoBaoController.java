@@ -2,9 +2,12 @@ package com.ljkdream.yiyuanduobao.controller;
 
 import com.ljkdream.core.entity.UnifiedResponse;
 import com.ljkdream.proxy.service.ProxyServiceIpAddressService;
+import com.ljkdream.yiyuanduobao.model.GrabBuyRecord;
 import com.ljkdream.yiyuanduobao.model.RelationGoodsPeriod;
 import com.ljkdream.yiyuanduobao.schedule.PeriodWinnerSchedule;
-import com.ljkdream.yiyuanduobao.service.YiYuanDuoBaoService;
+import com.ljkdream.yiyuanduobao.service.GrabBuyRecordService;
+import com.ljkdream.yiyuanduobao.service.PeriodWinnerService;
+import com.ljkdream.yiyuanduobao.service.RelationGoodsPeriodService;
 import com.ljkdream.yiyuanduobao.task.AllGoodsTask;
 import com.ljkdream.yiyuanduobao.task.PeriodWinnerBackwardTask;
 import com.ljkdream.core.task.TaskExecutorFactory;
@@ -25,12 +28,20 @@ import java.util.List;
 public class YiYuanDuoBaoController {
 
     @Autowired
-    private YiYuanDuoBaoService yiYuanDuoBaoService;
+    private RelationGoodsPeriodService relationGoodsPeriodService;
+
     @Autowired
     private ProxyServiceIpAddressService proxyServiceIpAddressService;
 
     @Autowired
+    private PeriodWinnerService periodWinnerService;
+
+    @Autowired
     private PeriodWinnerSchedule periodWinnerSchedule;
+
+    @Autowired
+    private GrabBuyRecordService grabBuyRecordService;
+
 
     @ResponseBody
     @RequestMapping("forward")
@@ -90,6 +101,16 @@ public class YiYuanDuoBaoController {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+        }
+        return new UnifiedResponse();
+    }
+
+    @ResponseBody
+    @RequestMapping("grabBuyRecord")
+    public UnifiedResponse grabBuyRecord() {
+        GrabBuyRecord grabBuyRecord = grabBuyRecordService.queryByMax();
+        if (grabBuyRecord == null) {
+//            periodWinnerService
         }
         return new UnifiedResponse();
     }
