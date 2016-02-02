@@ -21,7 +21,7 @@
             <property name="forceBigDecimals" value="false"/>
         </javaTypeResolver>
         <!--生成Model类存放位置-->
-        <javaModelGenerator targetPackage="com.ljkdream.core.model" targetProject="code">
+        <javaModelGenerator targetPackage="com.ljkdream.yiyuanduobao.model" targetProject="code">
             <property name="enableSubPackages" value="true"/>
             <property name="trimStrings" value="true"/>
         </javaModelGenerator>
@@ -45,6 +45,7 @@
         <!--</table>-->
         <!--<table tableName="relation_goods_period"/>-->
         <!--<table tableName="proxy_server_ip_address"/>-->
-        <table tableName="country_domain"/>
+        <table tableName="buy_record"/>
+        <table tableName="grab_buy_record"/>
     </context>
 </generatorConfiguration>
