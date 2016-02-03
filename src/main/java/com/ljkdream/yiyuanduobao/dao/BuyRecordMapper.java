@@ -4,7 +4,9 @@ import com.ljkdream.yiyuanduobao.model.BuyRecord;
 import com.ljkdream.yiyuanduobao.model.BuyRecordExample;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface BuyRecordMapper {
     int countByExample(BuyRecordExample example);
 

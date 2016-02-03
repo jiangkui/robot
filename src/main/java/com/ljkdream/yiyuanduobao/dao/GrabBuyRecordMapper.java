@@ -4,7 +4,9 @@ import com.ljkdream.yiyuanduobao.model.GrabBuyRecord;
 import com.ljkdream.yiyuanduobao.model.GrabBuyRecordExample;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface GrabBuyRecordMapper {
     int countByExample(GrabBuyRecordExample example);
 

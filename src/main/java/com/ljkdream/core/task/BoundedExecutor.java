@@ -41,6 +41,7 @@ public class BoundedExecutor {
                 @Override
                 public void run() {
                     try {
+                        task.initService();
                         task.execute();
                     } finally {
                         semaphore.release();

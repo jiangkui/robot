@@ -30,7 +30,8 @@ import java.util.regex.Pattern;
 public class AllGoodsTask extends AbstractBaseTask {
 
     //http://1.163.com/list/0-0-1-1.html ~ http://1.163.com/list/0-0-1-10.html 共10页
-    public static final String BASE_URL = "http://1.163.com/list/0-0-1-";
+    public static final String BASE_URL_LIST = "http://1.163.com/list/0-0-1-";
+    public static final String BASE_URL = "http://1.163.com";
 
     private static Logger logger = LoggerFactory.getLogger(AllGoodsTask.class);
 
@@ -109,7 +110,8 @@ public class AllGoodsTask extends AbstractBaseTask {
      */
     private List<String> obtainLinkList(String requestUrl) throws IOException {
         //匹配如下规则的url： http://1.163.com/detail/140-301043150.html"
-        Pattern compile = Pattern.compile("^http://1\\.163\\.com/detail/\\d{2,5}\\-\\d{1,20}\\.html");
+        Pattern compileOne = Pattern.compile("^http://1\\.163\\.com/detail/\\d{2,5}\\-\\d{1,20}\\.html");
+        Pattern compileTwo = Pattern.compile("^/detail/\\d{2,5}\\-\\d{1,20}\\.html");
 
         Connection connect = Jsoup.connect(requestUrl);
         Document document = connect.get();
@@ -120,7 +122,10 @@ public class AllGoodsTask extends AbstractBaseTask {
             Elements links = element.getElementsByTag("a");
             for (Element link : links) {
                 String href = link.attr("href");
-                if (compile.matcher(href).matches()) {
+                if (compileOne.matcher(href).matches()) {
+                    hrefList.add(href);
+                } else if (compileTwo.matcher(href).matches()) {
+                    href = BASE_URL + href;
                     hrefList.add(href);
                 }
             }
@@ -131,7 +136,7 @@ public class AllGoodsTask extends AbstractBaseTask {
 
     private String obtainUrl() {
         StringBuilder sb = new StringBuilder();
-        sb.append(BASE_URL).append(page).append(".html");
+        sb.append(BASE_URL_LIST).append(page).append(".html");
         return sb.toString();
     }
 
