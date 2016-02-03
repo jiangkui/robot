@@ -82,4 +82,18 @@ public class GrabBuyRecord {
     public void setModifyTime(Date modifyTime) {
         this.modifyTime = modifyTime;
     }
+
+    @Override
+    public String toString() {
+        return "GrabBuyRecord{" +
+                "id=" + id +
+                ", gid=" + gid +
+                ", period=" + period +
+                ", totalCnt=" + totalCnt +
+                ", url='" + url + '\'' +
+                ", status=" + status +
+                ", createTime=" + createTime +
+                ", modifyTime=" + modifyTime +
+                '}';
+    }
 }

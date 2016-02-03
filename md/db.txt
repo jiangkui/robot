@@ -128,7 +128,8 @@ create table `buy_record`(
     `create_time` datetime DEFAULT NULL COMMENT '创建时间',
     `modify_time` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
     PRIMARY KEY (`id`),
-    KEY `idx_periodGid` (`period`,`gid`)
+    KEY `idx_period` (`period`),
+    KEY `idx_gid` (`gid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 #抓取购买记录
@@ -142,8 +143,7 @@ create table `grab_buy_record`(
     `create_time` datetime COMMENT '创建时间',
     `modify_time` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
     PRIMARY KEY (`id`),
-    KEY `idx_periodGid` (`period`,`gid`),
-    UNIQUE KEY `UNIQUE_periodGid` (`period`,`gid`)
+    UNIQUE KEY `unique_gidPeriod` (`gid`,`period`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 

@@ -34,7 +34,7 @@ public abstract class BasePeriodWinnerTask extends AbstractBaseTask {
     public static final String BASE_URL = "http://1.163.com/goods/getPeriod.do?";
     public static final int DEFAULT_RETRY_NUM = 3; //超过重试次数就放弃
     protected static List<String> proxyStrList = new ArrayList<>();
-    protected static Random random = new Random();
+
 
     static {
         proxyStrList.add("CN");

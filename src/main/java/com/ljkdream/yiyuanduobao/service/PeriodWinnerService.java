@@ -71,4 +71,15 @@ public class PeriodWinnerService {
 
         return null;
     }
+
+    public PeriodWinner queryByMin() {
+        PeriodWinnerExample example = new PeriodWinnerExample();
+        example.setOrderByClause("id limit 1");
+
+        List<PeriodWinner> list = periodWinnerMapper.selectByExample(example);
+        if (list.size() > 0) {
+            return list.get(0);
+        }
+        return null;
+    }
 }
