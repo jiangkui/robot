@@ -1,5 +1,6 @@
 package com.ljkdream.proxy.task;
 
+import com.ljkdream.core.util.SpringUtil;
 import com.ljkdream.proxy.model.ProxyServerIpAddress;
 import com.ljkdream.proxy.service.ProxyServiceIpAddressService;
 import com.ljkdream.core.task.AbstractBaseTask;
@@ -30,7 +31,7 @@ public class CnProxyComTask extends AbstractBaseTask {
     private Logger logger = LoggerFactory.getLogger(CnProxyComTask.class);
 
     private String requestUrl = "";
-    private ProxyServiceIpAddressService proxyService;
+    private static ProxyServiceIpAddressService proxyService;
 
     static {
         proxyStrList.add("HK");
@@ -38,9 +39,15 @@ public class CnProxyComTask extends AbstractBaseTask {
         proxyStrList.add("TW");
     }
 
-    public CnProxyComTask(String requestUrl, ProxyServiceIpAddressService proxyService) {
+    @Override
+    public void initService() {
+        if (proxyService == null) {
+            proxyService = SpringUtil.getBean(ProxyServiceIpAddressService.class);
+        }
+    }
+
+    public CnProxyComTask(String requestUrl) {
         this.requestUrl = requestUrl;
-        this.proxyService = proxyService;
     }
 
     @Override

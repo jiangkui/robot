@@ -24,4 +24,9 @@ public interface ITask {
      * @return true 是毒丸。
      */
     boolean isPoisonPill();
+
+    /**
+     * 获取容器中的 注入对象
+     */
+    void initService();
 }

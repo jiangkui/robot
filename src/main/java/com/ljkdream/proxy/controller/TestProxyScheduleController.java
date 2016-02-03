@@ -27,7 +27,7 @@ public class TestProxyScheduleController {
     @ResponseBody
     @RequestMapping("cnProxyComTask")
     public UnifiedResponse cnProxyComTask() {
-        CnProxyComTask cnProxyComTask = new CnProxyComTask(CnProxyComTask.REQUEST_INTERNATIONAL_URL, proxyServiceIpAddressService);
+        CnProxyComTask cnProxyComTask = new CnProxyComTask(CnProxyComTask.REQUEST_INTERNATIONAL_URL);
 
         try {
             TaskExecutorFactory.getInstance().submitTask(cnProxyComTask);

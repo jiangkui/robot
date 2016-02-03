@@ -18,29 +18,24 @@ public class PeriodWinnerForwardTask extends BasePeriodWinnerTask {
 
     private static Logger logger = LoggerFactory.getLogger(PeriodWinnerForwardTask.class);
 
-    public PeriodWinnerForwardTask(Long gid, RelationGoodsPeriodService yiYuanDuoBaoService,
-                                   ProxyServiceIpAddressService proxyServiceIpAddressService) {
-        this(-1L, gid, yiYuanDuoBaoService, proxyServiceIpAddressService);
+    public PeriodWinnerForwardTask(Long gid) {
+        this(-1L, gid);
     }
 
-    public PeriodWinnerForwardTask(Long period, Long gid, RelationGoodsPeriodService yiYuanDuoBaoService,
-                                   ProxyServiceIpAddressService proxyServiceIpAddressService) {
-        this(period, gid, yiYuanDuoBaoService, proxyServiceIpAddressService, Integer.MAX_VALUE);
+    public PeriodWinnerForwardTask(Long period, Long gid) {
+        this(period, gid, Integer.MAX_VALUE);
     }
 
-    public PeriodWinnerForwardTask(Long period, Long gid, RelationGoodsPeriodService yiYuanDuoBaoService,
-                                   ProxyServiceIpAddressService proxyServiceIpAddressService, Integer executeNum) {
+    public PeriodWinnerForwardTask(Long period, Long gid, Integer executeNum) {
         this.period = period;
         this.gid = gid;
         this.executeNum = executeNum;
-        this.yiYuanDuoBaoService = yiYuanDuoBaoService;
-        this.proxyServiceIpAddressService = proxyServiceIpAddressService;
     }
 
     @Override
     public void execute() {
         //如果数据库中已经有该商品的开奖记录了，则从改期开始向前抓取，如果没有，则使用传入的旗号。
-        PeriodWinner winner = yiYuanDuoBaoService.queryNewPeriodWinnerByGid(gid);
+        PeriodWinner winner = periodWinnerService.queryNewPeriodWinnerByGid(gid);
         if (period != null) {
             period = winner.getPeriod();
         }

@@ -1,6 +1,7 @@
 package com.ljkdream.yiyuanduobao.task;
 
 import com.ljkdream.core.task.AbstractBaseTask;
+import com.ljkdream.core.util.SpringUtil;
 import com.ljkdream.yiyuanduobao.model.GrabBuyRecord;
 import com.ljkdream.yiyuanduobao.service.GrabBuyRecordService;
 import org.slf4j.Logger;
@@ -14,14 +15,20 @@ public class GrabBuyRecordTask extends AbstractBaseTask {
 
     private Long period;
     private Long gid;
-    private GrabBuyRecordService grabBuyRecordService;
+    private static GrabBuyRecordService grabBuyRecordService;
+
+    @Override
+    public void initService() {
+        if (grabBuyRecordService == null) {
+            grabBuyRecordService = SpringUtil.getBean(GrabBuyRecordService.class);
+        }
+    }
 
     private Logger logger = LoggerFactory.getLogger(GrabBuyRecordTask.class);
 
-    public GrabBuyRecordTask(Long period, Long gid, GrabBuyRecordService grabBuyRecordService) {
+    public GrabBuyRecordTask(Long period, Long gid) {
         this.period = period;
         this.gid = gid;
-        this.grabBuyRecordService = grabBuyRecordService;
     }
 
     @Override

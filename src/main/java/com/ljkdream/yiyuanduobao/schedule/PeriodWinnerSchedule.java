@@ -34,7 +34,7 @@ public class PeriodWinnerSchedule {
         for (RelationGoodsPeriod relationGoodsPeriod : list) {
 
             PeriodWinnerForwardTask periodWinnerForwardTask = new PeriodWinnerForwardTask(relationGoodsPeriod.getPeriod(),
-                    relationGoodsPeriod.getGid(), yiYuanDuoBaoService, proxyServiceIpAddressService);
+                    relationGoodsPeriod.getGid());
 
             try {
                 TaskExecutorFactory.getInstance().submitTask(periodWinnerForwardTask);

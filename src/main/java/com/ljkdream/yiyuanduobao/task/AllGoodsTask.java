@@ -1,5 +1,6 @@
 package com.ljkdream.yiyuanduobao.task;
 
+import com.ljkdream.core.util.SpringUtil;
 import com.ljkdream.yiyuanduobao.service.RelationGoodsPeriodService;
 import com.ljkdream.core.task.AbstractBaseTask;
 import org.jsoup.Connection;
@@ -33,12 +34,18 @@ public class AllGoodsTask extends AbstractBaseTask {
 
     private static Logger logger = LoggerFactory.getLogger(AllGoodsTask.class);
 
-    private RelationGoodsPeriodService yiYuanDuoBaoService;
+    private RelationGoodsPeriodService relationGoodsPeriodService;
     private int page = 1;
 
-    public AllGoodsTask(RelationGoodsPeriodService yiYuanDuoBaoService, int page) {
-        this.yiYuanDuoBaoService = yiYuanDuoBaoService;
+    public AllGoodsTask(int page) {
         this.page = page;
+    }
+
+    @Override
+    public void initService() {
+        if (relationGoodsPeriodService == null) {
+            relationGoodsPeriodService = SpringUtil.getBean(RelationGoodsPeriodService.class);
+        }
     }
 
     @Override
@@ -65,7 +72,7 @@ public class AllGoodsTask extends AbstractBaseTask {
 
                 Map<String, String> relationMap = obtainRelationMap(linkList);
 
-                yiYuanDuoBaoService.saveRelationGoodsPeriodByMap(relationMap);
+                relationGoodsPeriodService.saveRelationGoodsPeriodByMap(relationMap);
 
                 page ++;
                 TimeUnit.MILLISECONDS.sleep(random.nextInt(100));

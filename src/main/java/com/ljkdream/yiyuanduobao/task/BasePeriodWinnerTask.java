@@ -1,6 +1,7 @@
 package com.ljkdream.yiyuanduobao.task;
 
 import com.ljkdream.core.task.AbstractBaseTask;
+import com.ljkdream.core.util.SpringUtil;
 import com.ljkdream.proxy.service.ProxyServiceIpAddressService;
 import com.ljkdream.yiyuanduobao.entity.GidAndPeriodId;
 import com.ljkdream.yiyuanduobao.model.Goods;
@@ -44,13 +45,26 @@ public abstract class BasePeriodWinnerTask extends AbstractBaseTask {
     protected Integer executeNum; //该任务执行次数
     protected volatile int retryNum = 0; //更换代理重试请求的次数
 
-    protected static RelationGoodsPeriodService relationGoodsPeriodService;
     protected static PeriodWinnerService periodWinnerService;
     protected static GoodsService goodsService;
-    protected static GrabBuyRecordService grabBuyRecordService;
     protected static UserService userService;
     protected static ProxyServiceIpAddressService proxyServiceIpAddressService;
 
+    @Override
+    public void initService() {
+        if (periodWinnerService == null) {
+            periodWinnerService = SpringUtil.getBean(PeriodWinnerService.class);
+        }
+        if (goodsService == null) {
+            goodsService = SpringUtil.getBean(GoodsService.class);
+        }
+        if (userService == null) {
+            userService = SpringUtil.getBean(UserService.class);
+        }
+        if (proxyServiceIpAddressService == null) {
+            proxyServiceIpAddressService = SpringUtil.getBean(ProxyServiceIpAddressService.class);
+        }
+    }
 
     /**
      * 是否已经开奖

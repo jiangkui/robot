@@ -46,7 +46,7 @@ public class YiYuanDuoBaoController {
     @ResponseBody
     @RequestMapping("forward")
     public UnifiedResponse forward(Long period, Long gid) {
-        PeriodWinnerForwardTask periodWinnerTask = new PeriodWinnerForwardTask(period, gid, yiYuanDuoBaoService, proxyServiceIpAddressService);
+        PeriodWinnerForwardTask periodWinnerTask = new PeriodWinnerForwardTask(period, gid);
         try {
             TaskExecutorFactory.getInstance().submitTask(periodWinnerTask);
         } catch (InterruptedException e) {
@@ -58,7 +58,7 @@ public class YiYuanDuoBaoController {
     @ResponseBody
     @RequestMapping("backward")
     public UnifiedResponse backward(Long period, Long gid) {
-        PeriodWinnerBackwardTask periodWinnerTask = new PeriodWinnerBackwardTask(period, gid, yiYuanDuoBaoService, proxyServiceIpAddressService);
+        PeriodWinnerBackwardTask periodWinnerTask = new PeriodWinnerBackwardTask(period, gid);
         try {
             TaskExecutorFactory.getInstance().submitTask(periodWinnerTask);
         } catch (InterruptedException e) {
@@ -71,7 +71,7 @@ public class YiYuanDuoBaoController {
     @RequestMapping("grab-all-goods")
     public UnifiedResponse grabAllGoods(int page) {
 
-        AllGoodsTask allGoodsTask = new AllGoodsTask(yiYuanDuoBaoService, page);
+        AllGoodsTask allGoodsTask = new AllGoodsTask(page);
 
         try {
             TaskExecutorFactory.getInstance().submitTask(allGoodsTask);
@@ -92,10 +92,9 @@ public class YiYuanDuoBaoController {
     @ResponseBody
     @RequestMapping("backwardAll")
     public UnifiedResponse backwardAll() {
-        List<RelationGoodsPeriod> list = yiYuanDuoBaoService.queryAllRelationGoodsPeriod();
+        List<RelationGoodsPeriod> list = relationGoodsPeriodService.queryAllRelationGoodsPeriod();
         for (RelationGoodsPeriod relationGoodsPeriod : list) {
-            PeriodWinnerBackwardTask periodWinnerBackwardTask = new PeriodWinnerBackwardTask(relationGoodsPeriod.getGid(),
-                    yiYuanDuoBaoService, proxyServiceIpAddressService);
+            PeriodWinnerBackwardTask periodWinnerBackwardTask = new PeriodWinnerBackwardTask(relationGoodsPeriod.getGid());
             try {
                 TaskExecutorFactory.getInstance().submitTask(periodWinnerBackwardTask);
             } catch (InterruptedException e) {
