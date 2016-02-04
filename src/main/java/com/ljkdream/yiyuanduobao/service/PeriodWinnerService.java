@@ -1,6 +1,7 @@
 package com.ljkdream.yiyuanduobao.service;
 
 import com.ljkdream.yiyuanduobao.dao.PeriodWinnerMapper;
+import com.ljkdream.yiyuanduobao.model.GrabBuyRecord;
 import com.ljkdream.yiyuanduobao.model.PeriodWinner;
 import com.ljkdream.yiyuanduobao.model.PeriodWinnerExample;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,4 +83,34 @@ public class PeriodWinnerService {
         }
         return null;
     }
+
+    public PeriodWinner queryNext(Long gid, Long period) {
+        PeriodWinnerExample example = new PeriodWinnerExample();
+        example.createCriteria().andGidEqualTo(gid).andPeriodEqualTo(period);
+
+        List<PeriodWinner> list = periodWinnerMapper.selectByExample(example);
+        if (list.isEmpty()) {
+            return null;
+        }
+
+        PeriodWinner periodWinner = list.get(0);
+        PeriodWinner periodWinner1 = this.queryNextById(periodWinner.getId());
+        if (periodWinner1 == null) {
+            return null;
+        }
+
+        return periodWinner;
+    }
+
+    private PeriodWinner queryNextById(Long id) {
+        PeriodWinnerExample example = new PeriodWinnerExample();
+        example.createCriteria().andIdGreaterThan(id);
+        example.setOrderByClause("id asc limit 1");
+        List<PeriodWinner> list = periodWinnerMapper.selectByExample(example);
+        if (list.isEmpty()) {
+            return null;
+        }
+        return list.get(0);
+    }
+
 }

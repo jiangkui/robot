@@ -3,6 +3,9 @@ package com.ljkdream.yiyuanduobao.model;
 import java.util.Date;
 
 public class GrabBuyRecord {
+    public static final int STATUS_DEFAULT = 0; //未抓取完毕
+    public static final int STATUS_SUCCESS = 1;//抓取完毕
+
     private Long id;
 
     private Long gid;
