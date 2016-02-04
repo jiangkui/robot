@@ -6,6 +6,7 @@ import com.ljkdream.core.util.HttpClientUtil;
 import com.ljkdream.core.util.SpringUtil;
 import com.ljkdream.proxy.model.ProxyServerIpAddress;
 import com.ljkdream.proxy.service.ProxyServiceIpAddressService;
+import com.ljkdream.yiyuanduobao.entity.GrabBuyRecordSub;
 import com.ljkdream.yiyuanduobao.model.GrabBuyRecord;
 import com.ljkdream.yiyuanduobao.model.PeriodWinner;
 import com.ljkdream.yiyuanduobao.service.GrabBuyRecordService;
@@ -19,29 +20,19 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.TimeUnit;
 
 /**
  * 抓取购买记录 Task
  * Created by ljk on 16-2-2.
  */
-public class GrabBuyRecordTask extends AbstractBaseTask {
+public class GrabBuyRecordTask extends YiYuanDuoBaoBaseTask {
 
     private static Logger logger = LoggerFactory.getLogger(GrabBuyRecordTask.class);
-    protected static List<String> proxyStrList = new ArrayList<>();
     public static final int DEFAULT_PAGE_SIZE = 100;//默认每页条数
 
     private static GrabBuyRecordService grabBuyRecordService;
     private static PeriodWinnerService periodWinnerService;
-    protected static ProxyServiceIpAddressService proxyServiceIpAddressService;
-
-    static {
-        proxyStrList.add("CN");
-    }
-
-    private int retryNum = 0;
-    public static final int MAX_RETRY_NUM = 10;//重试次数
 
     @Override
     public void initService() {
@@ -72,26 +63,19 @@ public class GrabBuyRecordTask extends AbstractBaseTask {
 
     private boolean executeTask() throws IOException, InterruptedException {
         GrabBuyRecord grabBuyRecord = grabBuyRecordService.obtainGrabTask();
-
         if (grabBuyRecord == null) {
             logger.error("grabBuyRecord 为空！");
             return false;
         }
 
-        JSONObject jsonObject = this.obtainJsonObject(grabBuyRecord);
+        JSONObject jsonObject = this.obtainDate(grabBuyRecord.getUrl());
         if (jsonObject == null) {
             return false;
         }
 
-        JSONObject result = jsonObject.getJSONObject("result");
-        if (result.isEmpty()) {
-            logger.error("没有获取到result" + grabBuyRecord);
-            return false;
-        }
-
-        Object totalCntObj = jsonObject.get("totalCnt");
+        Object totalCntObj = jsonObject.getJSONObject("result").get("totalCnt");
         if (totalCntObj == null || (int) totalCntObj < 1) {
-            logger.error("totalCnt 异常：" + grabBuyRecord);
+            logger.error("totalCnt 异常;" + grabBuyRecord.getUrl());
             return false;
         }
 
@@ -104,40 +88,19 @@ public class GrabBuyRecordTask extends AbstractBaseTask {
         boolean success = grabBuyRecordService.insertAndTry(grabBuyRecord);
         if (!success) return false;
 
+        //提交多个任务
         CountDownLatch countDownLatch = new CountDownLatch(subTaskNum);
         List<GrabBuyRecordSubTask> subTaskList = createSubTask(grabBuyRecord, countDownLatch, subTaskNum);
 
-        //提交多个任务
         for (GrabBuyRecordSubTask grabBuyRecordSubTask : subTaskList) {
             TaskExecutorFactory.getInstance().submitTask(grabBuyRecordSubTask);
         }
 
+        assert subTaskList.size() == subTaskNum;
+
+        //线程同步
         countDownLatch.await();
         return true;
-    }
-
-    private JSONObject obtainJsonObject(GrabBuyRecord grabBuyRecord) throws InterruptedException, IOException {
-        ProxyServerIpAddress proxy = proxyServiceIpAddressService.obtainProxy(proxyStrList);
-        String resultStr = HttpClientUtil.executeByProxy(grabBuyRecord.getUrl(), proxy);
-        JSONObject jsonObject = JSONObject.fromObject(resultStr);
-        Object code = jsonObject.get("code");
-
-        //目标服务器返回结果异常
-        if (code == null || ((Integer) code) != 0) {
-            assert code != null;
-            if (((Integer) code) == -16) {
-                logger.info("抓取完毕！");
-                return null;
-            }
-
-            if (retryNum++ >= MAX_RETRY_NUM) {
-                logger.error("重试次数：" + retryNum + "过多。" + grabBuyRecord);
-            }
-            TimeUnit.MILLISECONDS.sleep(random.nextInt(100));
-        } else {
-            retryNum = 0;
-        }
-        return jsonObject;
     }
 
     private int obtainSubTaskNum(int totalCnt) {
@@ -152,8 +115,13 @@ public class GrabBuyRecordTask extends AbstractBaseTask {
 
     private List<GrabBuyRecordSubTask> createSubTask(GrabBuyRecord grabBuyRecord, CountDownLatch countDownLatch, int subTaskNum) {
         List<GrabBuyRecordSubTask> list = new ArrayList<>();
-        for (int i = 0; i < subTaskNum; i++) {
-            GrabBuyRecordSubTask grabBuyRecordSubTask = new GrabBuyRecordSubTask(i, DEFAULT_PAGE_SIZE, grabBuyRecord, countDownLatch);
+        Integer totalCnt = grabBuyRecord.getTotalCnt();
+        Long gid = grabBuyRecord.getGid();
+        Long period = grabBuyRecord.getPeriod();
+
+        for (int pageNum = 1; pageNum <= subTaskNum; pageNum++) {
+            GrabBuyRecordSub grabBuyRecordSub = new GrabBuyRecordSub(pageNum, DEFAULT_PAGE_SIZE, totalCnt, gid, period);
+            GrabBuyRecordSubTask grabBuyRecordSubTask = new GrabBuyRecordSubTask(grabBuyRecordSub, countDownLatch);
             list.add(grabBuyRecordSubTask);
         }
 

@@ -1,6 +1,13 @@
 package com.ljkdream.core.task;
 
+import com.ljkdream.core.util.HttpClientUtil;
+import com.ljkdream.proxy.model.ProxyServerIpAddress;
+import com.ljkdream.yiyuanduobao.model.GrabBuyRecord;
+import net.sf.json.JSONObject;
+
+import java.io.IOException;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 抽象任务基类
@@ -18,4 +25,5 @@ public abstract class AbstractBaseTask implements ITask{
     public boolean isPoisonPill() {
         return false;
     }
+
 }
