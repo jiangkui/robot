@@ -1,10 +1,7 @@
 package com.ljkdream.yiyuanduobao.task;
 
-import com.ljkdream.core.task.AbstractBaseTask;
 import com.ljkdream.core.task.TaskExecutorFactory;
-import com.ljkdream.core.util.HttpClientUtil;
 import com.ljkdream.core.util.SpringUtil;
-import com.ljkdream.proxy.model.ProxyServerIpAddress;
 import com.ljkdream.proxy.service.ProxyServiceIpAddressService;
 import com.ljkdream.yiyuanduobao.entity.GrabBuyRecordSub;
 import com.ljkdream.yiyuanduobao.model.GrabBuyRecord;
@@ -20,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 /**
  * 抓取购买记录 Task
@@ -33,6 +29,12 @@ public class GrabBuyRecordTask extends YiYuanDuoBaoBaseTask {
 
     private static GrabBuyRecordService grabBuyRecordService;
     private static PeriodWinnerService periodWinnerService;
+
+    private int num;
+
+    public GrabBuyRecordTask(int num) {
+        this.num = num;
+    }
 
     @Override
     public void initService() {
@@ -50,7 +52,7 @@ public class GrabBuyRecordTask extends YiYuanDuoBaoBaseTask {
     @Override
     public void execute() {
         try {
-            for (int i = 0; i < 1; i++) {
+            for (int i = 0; i < num; i++) {
                 boolean success = executeTask();
                 if (!success) break;
             }
@@ -64,9 +66,11 @@ public class GrabBuyRecordTask extends YiYuanDuoBaoBaseTask {
     private boolean executeTask() throws IOException, InterruptedException {
         GrabBuyRecord grabBuyRecord = grabBuyRecordService.obtainGrabTask();
         if (grabBuyRecord == null) {
-            logger.error("grabBuyRecord 为空！");
+            logger.error("没有下一个抓取任务了！");
             return false;
         }
+
+        logger.info("执行抓取参与记录任务：" + grabBuyRecord);
 
         JSONObject jsonObject = this.obtainDate(grabBuyRecord.getUrl());
         if (jsonObject == null) {
@@ -79,14 +83,16 @@ public class GrabBuyRecordTask extends YiYuanDuoBaoBaseTask {
             return false;
         }
 
-        //生成多个小任务，使用某种方式进行同步。
+        //生成多个小任务，使用 countDownLatch 进行同步。
         int totalCnt = (int) totalCntObj;
         grabBuyRecord.setTotalCnt(totalCnt);
         int subTaskNum = obtainSubTaskNum(totalCnt);
 
         //插入 grabBuyRecord 记录
-        boolean success = grabBuyRecordService.insertAndTry(grabBuyRecord);
-        if (!success) return false;
+        if (grabBuyRecord.getId() == null) {
+            boolean success = grabBuyRecordService.insertAndTry(grabBuyRecord);
+            if (!success) return false;
+        }
 
         //提交多个任务
         CountDownLatch countDownLatch = new CountDownLatch(subTaskNum);
@@ -100,6 +106,9 @@ public class GrabBuyRecordTask extends YiYuanDuoBaoBaseTask {
 
         //线程同步
         countDownLatch.await();
+
+        //更新抓取成功
+        grabBuyRecordService.updateStatusById(grabBuyRecord.getId(), GrabBuyRecord.STATUS_SUCCESS);
         return true;
     }
 
@@ -134,7 +143,7 @@ public class GrabBuyRecordTask extends YiYuanDuoBaoBaseTask {
         grabBuyRecord.setGid(periodWinner.getGid());
         grabBuyRecord.setPeriod(periodWinner.getPeriod());
         grabBuyRecord.setUrl(url);
-        grabBuyRecord.setStatus(GrabBuyRecord.STATUS_SUCCESS);
+        grabBuyRecord.setStatus(GrabBuyRecord.STATUS_DEFAULT);
         grabBuyRecord.setCreateTime(new Date());
         return grabBuyRecord;
     }

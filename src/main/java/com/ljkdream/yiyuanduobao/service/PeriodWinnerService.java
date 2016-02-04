@@ -94,12 +94,12 @@ public class PeriodWinnerService {
         }
 
         PeriodWinner periodWinner = list.get(0);
-        PeriodWinner periodWinner1 = this.queryNextById(periodWinner.getId());
-        if (periodWinner1 == null) {
+        PeriodWinner resultDate = this.queryNextById(periodWinner.getId());
+        if (resultDate == null) {
             return null;
         }
 
-        return periodWinner;
+        return resultDate;
     }
 
     private PeriodWinner queryNextById(Long id) {

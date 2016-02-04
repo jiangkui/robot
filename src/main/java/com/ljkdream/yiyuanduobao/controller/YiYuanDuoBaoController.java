@@ -9,6 +9,7 @@ import com.ljkdream.yiyuanduobao.service.GrabBuyRecordService;
 import com.ljkdream.yiyuanduobao.service.PeriodWinnerService;
 import com.ljkdream.yiyuanduobao.service.RelationGoodsPeriodService;
 import com.ljkdream.yiyuanduobao.task.AllGoodsTask;
+import com.ljkdream.yiyuanduobao.task.GrabBuyRecordTask;
 import com.ljkdream.yiyuanduobao.task.PeriodWinnerBackwardTask;
 import com.ljkdream.core.task.TaskExecutorFactory;
 import com.ljkdream.yiyuanduobao.task.PeriodWinnerForwardTask;
@@ -106,11 +107,18 @@ public class YiYuanDuoBaoController {
 
     @ResponseBody
     @RequestMapping("grabBuyRecord")
-    public UnifiedResponse grabBuyRecord() {
-        GrabBuyRecord grabBuyRecord = grabBuyRecordService.queryByMax();
-        if (grabBuyRecord == null) {
-//            periodWinnerService
+    public UnifiedResponse grabBuyRecord(int num) {
+        if (num < 0) {
+            num = Integer.MAX_VALUE;
         }
+        GrabBuyRecordTask grabBuyRecordTask = new GrabBuyRecordTask(num);
+
+        try {
+            TaskExecutorFactory.getInstance().submitTask(grabBuyRecordTask);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         return new UnifiedResponse();
     }
 }

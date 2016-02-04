@@ -102,7 +102,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.ljkdream.yiyuanduobao.model.GrabBuyRecord" >
+  <insert id="insert" parameterType="com.ljkdream.yiyuanduobao.model.GrabBuyRecord" keyProperty="id">
     insert into grab_buy_record (id, gid, period,
     total_cnt, url, status,
     create_time, modify_time)

@@ -40,10 +40,13 @@ public class GrabBuyRecordSubTask extends YiYuanDuoBaoBaseTask {
     @Override
     public void execute() {
         try {
-            JSONObject jsonObject = obtainDate(grabBuyRecordSub.getUrl());
+            String url = grabBuyRecordSub.getUrl();
+            logger.info("抓取参与记录子任务：" + url);
+
+            JSONObject jsonObject = obtainDate(url);
             JSONArray jsonArray = jsonObject.getJSONObject("result").getJSONArray("list");
             if (jsonArray.isEmpty()) {
-                logger.error("list 异常;" + grabBuyRecordSub.getUrl());
+                logger.error("list 异常;" + url);
                 return;
             }
 

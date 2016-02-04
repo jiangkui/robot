@@ -7,6 +7,12 @@
 <body>
 
 <h1>一元夺宝模块</h1>
+<h2>抓取参与记录</h2>
+<form action="/robot/yiyuanduobao/grabBuyRecord.json" method="get">
+    抓取数量:<input type="text" name="num" value="1"/>
+    <input type="submit" value="提交"/>
+</form>
+
 <h2>单个商品 向前抓取开奖数据</h2>
 <form action="/robot/yiyuanduobao/forward.json" method="get">
     period:<input type="text" name="period" value="212310462"/>

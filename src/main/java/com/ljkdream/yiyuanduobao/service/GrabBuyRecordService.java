@@ -70,6 +70,7 @@ public class GrabBuyRecordService {
     public GrabBuyRecord obtainGrabTask() {
         GrabBuyRecord grabBuyRecord = queryByMax();
         if (grabBuyRecord == null) {
+            //第一次抓取
             PeriodWinner periodWinner = periodWinnerService.queryByMin();
             if (periodWinner == null) {
                 logger.warn("没有 periodWinner 记录");
@@ -100,4 +101,15 @@ public class GrabBuyRecordService {
         }
         return true;
     }
+
+    public void updateStatusById(Long id, int status) {
+        GrabBuyRecordExample example = new GrabBuyRecordExample();
+        example.createCriteria().andIdEqualTo(id);
+
+        GrabBuyRecord grabBuyRecord = new GrabBuyRecord();
+        grabBuyRecord.setStatus(status);
+
+        int i = grabBuyRecordMapper.updateByExampleSelective(grabBuyRecord, example);
+    }
+
 }
