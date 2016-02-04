@@ -219,7 +219,8 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.ljkdream.yiyuanduobao.model.UserExample" resultType="java.lang.Integer">
+  <select id="countByExample" parameterType="com.ljkdream.yiyuanduobao.model.UserExample"
+          resultType="java.lang.Integer">
     select count(*) from user
     <if test="_parameter != null">
       <include refid="Example_Where_Clause"/>
@@ -365,4 +366,8 @@
     modify_time = #{modifyTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
+  <select id="queryAllCid" resultType="long">
+    select cid from user
+  </select>
 </mapper>

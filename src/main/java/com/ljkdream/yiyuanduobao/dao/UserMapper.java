@@ -30,4 +30,11 @@ public interface UserMapper {
     int updateByPrimaryKeySelective(User record);
 
     int updateByPrimaryKey(User record);
+
+    /**
+     * 查询所有的cid
+     *
+     * @return list
+     */
+    List<Long> queryAllCid();
 }

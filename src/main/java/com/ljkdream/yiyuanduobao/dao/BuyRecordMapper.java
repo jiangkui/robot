@@ -29,4 +29,12 @@ public interface BuyRecordMapper {
     int updateByPrimaryKeySelective(BuyRecord record);
 
     int updateByPrimaryKey(BuyRecord record);
+
+    /**
+     * 批量插入 参与记录
+     *
+     * @param buyRecordList 参与记录list
+     * @return int
+     */
+    int insertBuyRecordList(List<BuyRecord> buyRecordList);
 }

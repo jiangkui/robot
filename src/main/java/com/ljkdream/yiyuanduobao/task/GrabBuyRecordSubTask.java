@@ -1,26 +1,21 @@
 package com.ljkdream.yiyuanduobao.task;
 
-import com.ljkdream.core.task.AbstractBaseTask;
-import com.ljkdream.core.util.HttpClientUtil;
 import com.ljkdream.core.util.SpringUtil;
-import com.ljkdream.proxy.model.ProxyServerIpAddress;
 import com.ljkdream.proxy.service.ProxyServiceIpAddressService;
 import com.ljkdream.yiyuanduobao.entity.GrabBuyRecordSub;
 import com.ljkdream.yiyuanduobao.model.BuyRecord;
-import com.ljkdream.yiyuanduobao.model.GrabBuyRecord;
 import com.ljkdream.yiyuanduobao.model.User;
-import com.ljkdream.yiyuanduobao.service.GrabBuyRecordService;
-import com.ljkdream.yiyuanduobao.service.PeriodWinnerService;
+import com.ljkdream.yiyuanduobao.service.BuyRecordService;
+import com.ljkdream.yiyuanduobao.service.UserService;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 /**
  * 抓取参与记录的子任务
@@ -31,9 +26,8 @@ public class GrabBuyRecordSubTask extends YiYuanDuoBaoBaseTask {
 
     private static Logger logger = LoggerFactory.getLogger(GrabBuyRecordTask.class);
 
-    private static GrabBuyRecordService grabBuyRecordService;
-    private static PeriodWinnerService periodWinnerService;
-    private static ProxyServiceIpAddressService proxyServiceIpAddressService;
+    private static UserService userService;
+    private static BuyRecordService buyRecordService;
 
     private GrabBuyRecordSub grabBuyRecordSub;
     private CountDownLatch countDownLatch;
@@ -58,30 +52,71 @@ public class GrabBuyRecordSubTask extends YiYuanDuoBaoBaseTask {
 
             for (int i = 0; i < jsonArray.size(); i++) {
                 JSONObject grabJsonDate = jsonArray.getJSONObject(i);
-                BuyRecord buyRecord = this.obtainBuyRecord(grabJsonDate, grabBuyRecordSub);
                 User user = this.obtainUserDate(grabJsonDate);
+                if (user == null) {
+                    continue;
+                }
 
+                BuyRecord buyRecord = this.obtainBuyRecord(grabJsonDate, grabBuyRecordSub, user);
+                buyRecordList.add(buyRecord);
+                userList.add(user);
             }
+
+            //存储数据
+            userService.insertByList(userList);
+            buyRecordService.insertByList(buyRecordList);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             countDownLatch.countDown();
         }
-
     }
 
     private User obtainUserDate(JSONObject grabJsonDate) {
-        return null;
+        JSONObject user = grabJsonDate.getJSONObject("user");
+        if (user.isEmpty()) {
+            logger.error("抓取参与记录时用户为空！");
+            return null;
+        }
+        User result = (User) JSONObject.toBean(user, User.class);
+        return result;
     }
 
-    private BuyRecord obtainBuyRecord(JSONObject grabJsonDate, GrabBuyRecordSub grabBuyRecordSub) {
-        return null;
+    private BuyRecord obtainBuyRecord(JSONObject grabJsonDate, GrabBuyRecordSub grabBuyRecordSub, User user) {
+        int num = grabJsonDate.getInt("num");
+        String time = grabJsonDate.getString("time");
+        int rid = grabJsonDate.getInt("rid");
+        String device = grabJsonDate.getString("device");
+        int regularBuy = grabJsonDate.getInt("regularBuy");
+
+        BuyRecord buyRecord = new BuyRecord();
+        buyRecord.setGid(grabBuyRecordSub.getGid());
+        buyRecord.setPeriod(grabBuyRecordSub.getPeriod());
+        buyRecord.setNum(num);
+        buyRecord.setTime(time);
+        buyRecord.setCid(user.getCid());
+        buyRecord.setUid(user.getUid());
+        buyRecord.setNickname(user.getNickname());
+        buyRecord.setIpAddress(user.getIPAddress());
+        buyRecord.setIp(user.getIP());
+        buyRecord.setRid(rid);
+        buyRecord.setDevice(device);
+        buyRecord.setRegularBuy(regularBuy);
+        buyRecord.setCreateTime(new Date());
+
+        return buyRecord;
     }
 
     @Override
     public void initService() {
         if (proxyServiceIpAddressService == null) {
             proxyServiceIpAddressService = SpringUtil.getBean(ProxyServiceIpAddressService.class);
+        }
+        if (userService == null) {
+            userService = SpringUtil.getBean(UserService.class);
+        }
+        if (buyRecordService == null) {
+            buyRecordService = SpringUtil.getBean(BuyRecordService.class);
         }
     }
 

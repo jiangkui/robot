@@ -1,6 +1,5 @@
 package com.ljkdream.yiyuanduobao.entity;
 
-import com.ljkdream.yiyuanduobao.model.GrabBuyRecord;
 import com.ljkdream.yiyuanduobao.task.GrabBuyRecordTask;
 
 /**
