@@ -27,7 +27,7 @@ public class PeriodWinnerSchedule {
     /**
      * 向前抓取最近的开奖数据。
      */
-    @Scheduled(cron = "0 0 * * * ?")
+//    @Scheduled(cron = "0 0 * * * ?")
     public void execute() {
         List<RelationGoodsPeriod> list = yiYuanDuoBaoService.queryAllRelationGoodsPeriod();
 
