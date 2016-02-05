@@ -7,9 +7,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 用户服务
@@ -20,7 +19,7 @@ public class UserService {
 
     @Autowired
     private UserMapper userMapper;
-    private Set<Long> cidCacheSet = new HashSet<>();
+    private ConcurrentHashMap<Long, Boolean> cidCacheMap = new ConcurrentHashMap<>();
 
     public int saveUserByNotExist(User user) {
         boolean userExist = this.userExist(user.getCid());
@@ -30,8 +29,6 @@ public class UserService {
 
         int insert = userMapper.insert(user);
 
-        //加入缓存
-        cidCacheSet.add(user.getCid());
         return insert;
     }
 
@@ -55,20 +52,26 @@ public class UserService {
      * @return true 已经存在
      */
     public boolean userExist(Long cid) {
-        if (cidCacheSet.isEmpty()) {
+        if (cidCacheMap.isEmpty()) {
             synchronized (UserService.class) {
-                if (cidCacheSet.isEmpty()) {
+                if (cidCacheMap.isEmpty()) {
                     refreshCidCache();
                 }
             }
         }
-        return cidCacheSet.contains(cid);
+
+        Boolean exist = cidCacheMap.putIfAbsent(cid, true);
+        if (exist == null) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     private void refreshCidCache() {
         List<Long> list = userMapper.queryAllCid();
         for (Long cid : list) {
-            cidCacheSet.add(cid);
+            cidCacheMap.put(cid, true);
         }
     }
 

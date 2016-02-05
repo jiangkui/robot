@@ -102,14 +102,24 @@ public class GrabBuyRecordService {
         return true;
     }
 
+    public void updateStatusByGidPeriod(GrabBuyRecord grabBuyRecord, int status) {
+        GrabBuyRecordExample example = new GrabBuyRecordExample();
+        example.createCriteria().andGidEqualTo(grabBuyRecord.getGid()).andPeriodEqualTo(grabBuyRecord.getPeriod());
+
+        GrabBuyRecord update = new GrabBuyRecord();
+        update.setStatus(status);
+
+        int i = grabBuyRecordMapper.updateByExampleSelective(update, example);
+    }
+
     public void updateStatusById(Long id, int status) {
         GrabBuyRecordExample example = new GrabBuyRecordExample();
         example.createCriteria().andIdEqualTo(id);
 
-        GrabBuyRecord grabBuyRecord = new GrabBuyRecord();
-        grabBuyRecord.setStatus(status);
+        GrabBuyRecord update = new GrabBuyRecord();
+        update.setStatus(status);
 
-        int i = grabBuyRecordMapper.updateByExampleSelective(grabBuyRecord, example);
+        int i = grabBuyRecordMapper.updateByExampleSelective(update, example);
     }
 
 }

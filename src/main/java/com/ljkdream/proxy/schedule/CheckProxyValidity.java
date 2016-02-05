@@ -29,8 +29,9 @@ public class CheckProxyValidity {
     /**
      * 每个一段时间就维护一次
      * 目前只维护国内的代理
+     * 代理暂不维护
      */
-    @Scheduled(cron = "0 0 * * * ?")
+//    @Scheduled(cron = "0 0 0 * * ?")
     public void execute() {
         List<ProxyServerIpAddress> proxyList = proxyService.queryAllByDoman("CN");
 

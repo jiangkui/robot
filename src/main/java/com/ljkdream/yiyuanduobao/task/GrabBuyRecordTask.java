@@ -108,7 +108,8 @@ public class GrabBuyRecordTask extends YiYuanDuoBaoBaseTask {
         countDownLatch.await();
 
         //更新抓取成功
-        grabBuyRecordService.updateStatusById(grabBuyRecord.getId(), GrabBuyRecord.STATUS_SUCCESS);
+        grabBuyRecordService.updateStatusByGidPeriod(grabBuyRecord, GrabBuyRecord.STATUS_SUCCESS);
+//        grabBuyRecordService.updateStatusById(grabBuyRecord.getId(), GrabBuyRecord.STATUS_SUCCESS);
         return true;
     }
 
