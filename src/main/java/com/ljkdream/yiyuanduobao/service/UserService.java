@@ -52,16 +52,23 @@ public class UserService {
      * @return true 已经存在
      */
     public boolean userExist(Long cid) {
-        if (cidCacheMap.isEmpty()) {
-            synchronized (UserService.class) {
-                if (cidCacheMap.isEmpty()) {
-                    refreshCidCache();
-                }
-            }
+//        if (cidCacheMap.isEmpty()) {
+//            synchronized (UserService.class) {
+//                if (cidCacheMap.isEmpty()) {
+//                    refreshCidCache();
+//                }
+//            }
+//        }
+
+        //缓存中已经存在
+        Boolean exist = cidCacheMap.putIfAbsent(cid, true);
+        if (exist != null) {
+            return true;
         }
 
-        Boolean exist = cidCacheMap.putIfAbsent(cid, true);
-        if (exist == null) {
+        //查询 user 数据是否已经存在
+        User user = queryUserByCid(cid);
+        if (user == null) {
             return false;
         } else {
             return true;
